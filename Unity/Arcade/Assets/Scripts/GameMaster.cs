@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using Life;
+using TreeEditor;
 using UnityEngine;
 
 public class GameMaster : MonoBehaviour {
-    [SerializeField]
-    List<Tile> map;
+    [SerializeField]Mesh mesh;
+    [SerializeField]List<Tile> map;
 
     void Start () {
-            
-    }
-
-    // Update is called once per frame
-    void Update () {
+        // mesh.vertices;
         
+
+        // for (var i = 0; i < mesh.triangles.Length; i += 3) {
+            
+        // }
     }
 }

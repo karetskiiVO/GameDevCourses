@@ -1,22 +1,40 @@
 using System.Collections.Generic;
+using UnityEditor;
 
 namespace Life {
 
-struct Fraction {}
+public abstract class Fraction {
+    public abstract Fraction Process (Tile tile);
 
-abstract class Tile {
-    public Fraction fraction{get; set;}
-    private Fraction next;
-
-    private Tile[] neightbours;
-
-    // mesh
-    
-    public abstract void Forward();
-    public abstract void Update();
+    public static Fraction noFraction{get;} = new NoFractionType();
 }
 
+public class NoFractionType : Fraction {
+    public override Fraction Process (Tile tile) {
+        return this;
+    }
+}
 
+public class Tile {
+    public Fraction fraction = Fraction.noFraction;
+    private Fraction nextFraction = Fraction.noFraction;
+    public Tile[] neightbours;
 
+    public void Process () {}
+
+    public void Update () {
+        fraction = nextFraction;
+        nextFraction = Fraction.noFraction;
+        
+        Draw();
+    }
+
+    private void Draw () {} 
+
+    public Tile () {}
+    public Tile (Tile[] neightbours) {
+        this.neightbours = (Tile[])neightbours.Clone();
+    }
+}
 
 }
