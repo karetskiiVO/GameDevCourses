@@ -5,15 +5,7 @@ using TreeEditor;
 using UnityEngine;
 
 public class GameMaster : MonoBehaviour {
-    [SerializeField]Mesh mesh;
-    [SerializeField]List<Tile> map;
+    [SerializeField]GameObject FieldCreator;
 
-    void Start () {
-        // mesh.vertices;
-        
 
-        // for (var i = 0; i < mesh.triangles.Length; i += 3) {
-            
-        // }
-    }
 }
