@@ -34,6 +34,7 @@ public class Field : MonoBehaviour {
 
     private void Clear() {
         if (map != null) Array.Clear(map, 0, map.Length);
+        GetComponent<MeshFilter>().sharedMesh.Clear();
     }
 }
 
