@@ -1,40 +1,34 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 
-namespace Life {
-
-public abstract class Fraction {
-    public abstract Fraction Process (Tile tile);
-
-    public static Fraction noFraction{get;} = new NoFractionType();
-}
-
-public class NoFractionType : Fraction {
-    public override Fraction Process (Tile tile) {
-        return this;
-    }
-}
-
 public class Tile {
-    public Fraction fraction = Fraction.noFraction;
-    private Fraction nextFraction = Fraction.noFraction;
+    private IFraction next = null;
+    private readonly int[] polygonidx;
+    public IFraction fraction = null;
     public Tile[] neightbours;
 
-    public void Process () {}
-
-    public void Update () {
-        fraction = nextFraction;
-        nextFraction = Fraction.noFraction;
-        
-        Draw();
+    public void Interact () {
+        next = fraction.Interact(this);
     }
 
-    private void Draw () {} 
+    public void Flush () {
+        if (!ReferenceEquals(fraction, next)) {
+            next = fraction;
+            foreach (var idx in polygonidx) fraction.AddUpdates(idx);
+        }
+    }
 
-    public Tile () {}
-    public Tile (Tile[] neightbours) {
+    public void Init (IFraction fraction) {
+        this.fraction = fraction;
+        foreach (var idx in polygonidx) fraction.AddUpdates(idx);
+    }
+
+    public Tile (int[] polygonidx) {
+        this.polygonidx = (int[])polygonidx.Clone();
+    }
+    public Tile (int[] polygonidx, Tile[] neightbours) {
+        this.polygonidx = (int[])polygonidx.Clone();
         this.neightbours = (Tile[])neightbours.Clone();
     }
-}
-
 }

@@ -1,0 +1,43 @@
+private MeshRenderer render;
+private Mesh mesh;
+
+public Material[] materials;
+private GameObject mark;
+private Vector3[] vertices;
+private int[] triangles;
+private Vector2[] uvs;
+private Color[] colors;
+
+//Start
+mark = new GameObject("mark");
+render = mark.AddComponent<MeshRenderer> ();
+render.materials = materials;
+mesh = mark.AddComponent<MeshFilter> ().mesh;
+mesh.subMeshCount = materials.Length;
+....
+
+//Update
+....
+
+triangles [segmentCount * 6 + 0] = segmentCount * 4 + 0;
+triangles [segmentCount * 6 + 1] = segmentCount * 4 + 2;
+triangles [segmentCount * 6 + 2] = segmentCount * 4 + 1;
+                               
+triangles [segmentCount * 6 + 3] = segmentCount * 4 + 2;
+triangles [segmentCount * 6 + 4] = segmentCount * 4 + 3;
+triangles [segmentCount * 6 + 5] = segmentCount * 4 + 1;
+....
+
+if (currMaterial == "Grass (Instance)") {
+   mesh.SetTriangles(triangles, 0);
+}
+if (currMaterial== "Sand (Instance)") {
+   mesh.SetTriangles(triangles, 1);
+}
+if (currMaterial == "Asphalt (Instance)") {
+   mesh.SetTriangles(triangles, 2);
+}
+mesh.vertices = vertices;
+mesh.uv = uvs;
+mesh.colors = colors;
+mesh.RecalculateBounds ();

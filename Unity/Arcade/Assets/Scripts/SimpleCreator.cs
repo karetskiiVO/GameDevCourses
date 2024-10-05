@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Life;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
@@ -26,10 +25,11 @@ public class SimpleCreator : MonoBehaviour, IFieldCreator {
         }
 
         // Добавит грань, если часть вершин уже существует и имеют uv координаты, то новые будут проигнорированны
-        public void Add((Vector3, Vector3, Vector3) edge, (Vector2, Vector2, Vector2) uvedge) {
+        public int Add((Vector3, Vector3, Vector3) edge, (Vector2, Vector2, Vector2) uvedge) {
             Vector3[] verts   = {  edge.Item1,   edge.Item2,   edge.Item3};
             Vector2[] uvVerts = {uvedge.Item1, uvedge.Item2, uvedge.Item3};
-
+            
+            var res = triangles.Count / 3;
             for (var i = 0; i < 3; i++) {
                 if (vertIndexes.ContainsKey(verts[i])) {
                     triangles.Add(vertIndexes[verts[i]]);
@@ -44,6 +44,8 @@ public class SimpleCreator : MonoBehaviour, IFieldCreator {
                     triangles.Add(newIdx);
                 }
             }
+
+            return res;
         }
     }
 
@@ -62,16 +64,18 @@ public class SimpleCreator : MonoBehaviour, IFieldCreator {
                 var triangleStartPoint = new Vector3(x, y, 0);
 
                 // TODO: связать вершину с гранью
-                meshAccumulator.Add(
-                    edge:   (triangleStartPoint, triangleStartPoint + Vector3.up, triangleStartPoint + Vector3.right),
-                    uvedge: (position + Vector2.zero, position + Vector2.up, position + Vector2.right)
-                );
-                meshAccumulator.Add(
-                    edge:   (triangleStartPoint + Vector3.up + Vector3.right, triangleStartPoint + Vector3.right, triangleStartPoint + Vector3.up),
-                    uvedge: (position + Vector2.up + Vector2.right, position + Vector2.right, position + Vector2.up)
-                );
+                int[] idxes = new int[] {
+                    meshAccumulator.Add(
+                        edge:   (triangleStartPoint, triangleStartPoint + Vector3.up, triangleStartPoint + Vector3.right),
+                        uvedge: (position + Vector2.zero, position + Vector2.up, position + Vector2.right)
+                    ),
+                    meshAccumulator.Add(
+                        edge:   (triangleStartPoint + Vector3.up + Vector3.right, triangleStartPoint + Vector3.right, triangleStartPoint + Vector3.up),
+                        uvedge: (position + Vector2.up + Vector2.right, position + Vector2.right, position + Vector2.up)
+                    )
+                };
 
-                var newTile = new Tile();
+                var newTile = new Tile(idxes);
                 tiles.Add(position, newTile);
                 res.Add(newTile);
             }
