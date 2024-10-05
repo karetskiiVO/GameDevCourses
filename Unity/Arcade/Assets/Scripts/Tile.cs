@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 using Unity.VisualScripting;
 using UnityEditor;
 
@@ -14,21 +15,24 @@ public class Tile {
 
     public void Flush () {
         if (!ReferenceEquals(fraction, next)) {
-            next = fraction;
+            fraction = next;
             foreach (var idx in polygonidx) fraction.AddUpdates(idx);
         }
     }
 
     public void Init (IFraction fraction) {
-        this.fraction = fraction;
-        foreach (var idx in polygonidx) fraction.AddUpdates(idx);
+        next = fraction;
+        Flush();
     }
 
     public Tile (int[] polygonidx) {
-        this.polygonidx = (int[])polygonidx.Clone();
+        this.polygonidx = new int[polygonidx.Length];
+        polygonidx.CopyTo(this.polygonidx, 0);
     }
+
     public Tile (int[] polygonidx, Tile[] neightbours) {
-        this.polygonidx = (int[])polygonidx.Clone();
+        this.polygonidx = new int[polygonidx.Length];
+        polygonidx.CopyTo(this.polygonidx, 0);
         this.neightbours = (Tile[])neightbours.Clone();
     }
 }

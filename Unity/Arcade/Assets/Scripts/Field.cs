@@ -24,20 +24,20 @@ public class Field : MonoBehaviour {
     private Mesh mesh = null; 
     private Tile[] map;
 
-    // [SerializeField]bool create = false;
-    // bool created = false;
-    //
-    // private void OnValidate() {
-    //     if (created != create) {
-    //         created = create;
-    //
-    //         if (created) {
-    //             Spawn();
-    //         } else {
-    //             Clear();
-    //         }
-    //     }
-    // }
+    [SerializeField]bool create = false;
+    bool created = false;
+
+    private void OnValidate() {
+        if (created != create) {
+            created = create;
+
+            if (created) {
+                Spawn();
+            } else {
+                Clear();
+            }
+        }
+    }
 
     public void Spawn () {
         map = creator.GetComponent<IFieldCreator>().CreateField(this);
@@ -61,8 +61,9 @@ public class Field : MonoBehaviour {
         meshRenderer.materials = usedMaterials;
         mesh.subMeshCount = usedMaterials.Length;
 
+        var random = new System.Random();
         foreach (var tile in map) {
-            tile.Init(fractionsInfo[0].fraction); 
+            tile.Init(fractionsInfo[random.Next(0, 2)].fraction); 
         }
 
         foreach (var fractionInfo in fractionsInfo) {

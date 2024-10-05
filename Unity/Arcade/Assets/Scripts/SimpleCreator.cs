@@ -25,25 +25,32 @@ public class SimpleCreator : MonoBehaviour, IFieldCreator {
         }
 
         // Добавит грань, если часть вершин уже существует и имеют uv координаты, то новые будут проигнорированны
-        public int Add((Vector3, Vector3, Vector3) edge, (Vector2, Vector2, Vector2) uvedge) {
+        public (int, int, int) Add((Vector3, Vector3, Vector3) edge, (Vector2, Vector2, Vector2) uvedge) {
             Vector3[] verts   = {  edge.Item1,   edge.Item2,   edge.Item3};
             Vector2[] uvVerts = {uvedge.Item1, uvedge.Item2, uvedge.Item3};
-            
-            var res = triangles.Count / 3;
+            int[] buf = {0, 0, 0};
+
+            (int, int, int) res;
             for (var i = 0; i < 3; i++) {
+                int newIdx;
                 if (vertIndexes.ContainsKey(verts[i])) {
-                    triangles.Add(vertIndexes[verts[i]]);
+                    newIdx = vertIndexes[verts[i]];
                 } else {
-                    var newIdx = vertices.Count;
+                    newIdx = vertices.Count;
                     
                     vertices.Add(verts[i]);
                     uv.Add(uvVerts[i]);
 
                     vertIndexes.Add(verts[i], newIdx);
-
-                    triangles.Add(newIdx);
                 }
+                triangles.Add(newIdx);
+
+                buf[i] = newIdx;
             }
+
+            res.Item1 = buf[0];
+            res.Item2 = buf[1];
+            res.Item3 = buf[2];
 
             return res;
         }
@@ -52,7 +59,7 @@ public class SimpleCreator : MonoBehaviour, IFieldCreator {
     [SerializeField]Vector2Int size = new Vector2Int(12, 12);
 
     public Tile[] CreateField(Field field) {
-        var res = new List<Tile>();
+        var buf = new List<Tile>();
         
         var meshAccumulator = new MeshAccumulator();        
         var tiles = new Dictionary<Vector2Int, Tile>();
@@ -63,21 +70,22 @@ public class SimpleCreator : MonoBehaviour, IFieldCreator {
                 var position = new Vector2Int(x, y);
                 var triangleStartPoint = new Vector3(x, y, 0);
 
-                // TODO: связать вершину с гранью
+                var tr1 = meshAccumulator.Add(
+                    edge:   (triangleStartPoint, triangleStartPoint + Vector3.up, triangleStartPoint + Vector3.right),
+                    uvedge: (position + Vector2.zero, position + Vector2.up, position + Vector2.right)
+                );
+                var tr2 = meshAccumulator.Add(
+                    edge:   (triangleStartPoint + Vector3.up + Vector3.right, triangleStartPoint + Vector3.right, triangleStartPoint + Vector3.up),
+                    uvedge: (position + Vector2.up + Vector2.right, position + Vector2.right, position + Vector2.up)
+                );
                 int[] idxes = new int[] {
-                    meshAccumulator.Add(
-                        edge:   (triangleStartPoint, triangleStartPoint + Vector3.up, triangleStartPoint + Vector3.right),
-                        uvedge: (position + Vector2.zero, position + Vector2.up, position + Vector2.right)
-                    ),
-                    meshAccumulator.Add(
-                        edge:   (triangleStartPoint + Vector3.up + Vector3.right, triangleStartPoint + Vector3.right, triangleStartPoint + Vector3.up),
-                        uvedge: (position + Vector2.up + Vector2.right, position + Vector2.right, position + Vector2.up)
-                    )
+                    tr1.Item1, tr1.Item2, tr1.Item3,
+                    tr2.Item1, tr2.Item2, tr2.Item3,
                 };
 
                 var newTile = new Tile(idxes);
                 tiles.Add(position, newTile);
-                res.Add(newTile);
+                buf.Add(newTile);
             }
         }
 
@@ -115,6 +123,9 @@ public class SimpleCreator : MonoBehaviour, IFieldCreator {
             }
         }
 
-        return res.ToArray();
+        var res = new Tile[buf.Count];
+        buf.ToArray().CopyTo(res, 0);
+        
+        return res;
     }
 }

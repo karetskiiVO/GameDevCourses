@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff4bd3d9a48486b40a0c42ac5bcfeeaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 12, y: 12}
+  size: {x: 4, y: 4}
 --- !u!4 &723344451
 Transform:
   m_ObjectHideFlags: 0
@@ -369,7 +369,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2080389163}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -411,7 +411,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2080389163}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &2080389166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -424,8 +424,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b63f08738f4d2164a9c3f2b52898b073, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fractionObj:
+  - fractionObj: {fileID: 4532783429507838088, guid: ec03196088235cf419f21ee165a0e65e, type: 3}
+    material: {fileID: 2100000, guid: 61c82eab470e9a54cae29840cd647467, type: 2}
+  - fractionObj: {fileID: 3033390886075591521, guid: 1bf5a91312ed20640a3f0709dd8fc0bb, type: 3}
+    material: {fileID: 2100000, guid: faab91fd15acd864bb4391394cec1580, type: 2}
   creator: {fileID: 723344449}
-  create: 1
 --- !u!4 &2080389167
 Transform:
   m_ObjectHideFlags: 0
