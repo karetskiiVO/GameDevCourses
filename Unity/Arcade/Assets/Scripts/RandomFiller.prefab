@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3033390886075591521
+--- !u!1 &4737763354344159616
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,38 +8,44 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8115654143061592430}
-  - component: {fileID: 2399973820474209874}
+  - component: {fileID: 4737763354344159622}
+  - component: {fileID: 4737763354344159617}
   m_Layer: 0
-  m_Name: NoFraction1
+  m_Name: RandomFiller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8115654143061592430
+--- !u!4 &4737763354344159622
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3033390886075591521}
+  m_GameObject: {fileID: 4737763354344159616}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.293701, y: -0.9776926, z: 14.74239}
+  m_LocalPosition: {x: 6.0555124, y: 8.89269, z: -5.2002497}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2399973820474209874
+--- !u!114 &4737763354344159617
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3033390886075591521}
+  m_GameObject: {fileID: 4737763354344159616}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb1f3f63aacc2704cac891ab0041e87b, type: 3}
+  m_Script: {fileID: 11500000, guid: 35d3e71e01c24124f9397e4e39d04095, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultFractionIdx: 0
+  fractionObj:
+  - fractionObj: {fileID: 4532783429507838088, guid: ec03196088235cf419f21ee165a0e65e, type: 3}
+    material: {fileID: 2100000, guid: 61c82eab470e9a54cae29840cd647467, type: 2}
+  - fractionObj: {fileID: 3033390886075591521, guid: 1bf5a91312ed20640a3f0709dd8fc0bb, type: 3}
+    material: {fileID: 2100000, guid: faab91fd15acd864bb4391394cec1580, type: 2}

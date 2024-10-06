@@ -4,9 +4,9 @@ using Unity.VisualScripting;
 using UnityEditor;
 
 public class Tile {
-    private IFraction next = null;
+    private Fraction next = null;
     private readonly int[] polygonidx;
-    public IFraction fraction = null;
+    public Fraction fraction = null;
     public Tile[] neightbours;
 
     public void Interact () {
@@ -14,13 +14,11 @@ public class Tile {
     }
 
     public void Flush () {
-        if (!ReferenceEquals(fraction, next)) {
-            fraction = next;
-            foreach (var idx in polygonidx) fraction.AddUpdates(idx);
-        }
+        fraction = next;
+        foreach (var idx in polygonidx) fraction.AddUpdates(idx);
     }
 
-    public void Init (IFraction fraction) {
+    public void Init (Fraction fraction) {
         next = fraction;
         Flush();
     }

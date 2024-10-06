@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -68,7 +69,7 @@ public class SimpleCreator : MonoBehaviour, IFieldCreator {
         for (var x = 0; x < size.x; x++) {
             for (var y = 0; y < size.y; y++) {
                 var position = new Vector2Int(x, y);
-                var triangleStartPoint = new Vector3(x, y, 0);
+                var triangleStartPoint = new Vector3(x - size.x/2, y - size.y/2, 0);
 
                 var tr1 = meshAccumulator.Add(
                     edge:   (triangleStartPoint, triangleStartPoint + Vector3.up, triangleStartPoint + Vector3.right),
@@ -89,7 +90,8 @@ public class SimpleCreator : MonoBehaviour, IFieldCreator {
             }
         }
 
-        var mesh = field.GetComponent<MeshFilter>().sharedMesh;
+        if (field.GetComponent<MeshFilter>().mesh == null) field.GetComponent<MeshFilter>().mesh = new Mesh();
+        var mesh = field.GetComponent<MeshFilter>().mesh;
         mesh.Clear();
 
         mesh.vertices  = meshAccumulator.Vertices();

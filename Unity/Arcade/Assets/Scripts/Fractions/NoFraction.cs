@@ -6,22 +6,25 @@ using MiscUtil.Collections.Extensions;
 using System.Runtime.InteropServices.ComTypes;
 
 // TODO рандомный прирост
-public class NoFraction : MonoBehaviour, IFraction {
-    public DynamicBuffer<int> updates = new DynamicBuffer<int>();
+public class NoFraction : Fraction {
+    private Dictionary<Fraction, int> buffer = new Dictionary<Fraction, int>();
 
-    private readonly Dictionary<IFraction, int> buffer;
+    public override void Init (Field field) {
+        this.field = field;
+        foreach (var fractionInfo in field.Filler.fractionsInfo) buffer[fractionInfo.fraction] = 0;
+    }
 
-    public IFraction Interact (Tile tile) {
+    public override Fraction Interact (Tile tile) {
         int cnt = 0;
-        IFraction res = this;
+        Fraction res = this;
         foreach(var neight in tile.neightbours) {
-            if (ReferenceEquals(neight.fraction, this)) cnt++;
-
+            if (neight.fraction == this) continue;
+            cnt++;
             buffer[neight.fraction]++;
         }
 
         if (cnt == 3) {
-            foreach (var key in buffer.Keys) {
+            foreach (var key in buffer.Keys.ToList()) {
                 if (buffer[key] >= 2) {
                     res = key;
                     break;
@@ -29,23 +32,10 @@ public class NoFraction : MonoBehaviour, IFraction {
             }
         }
 
-        foreach (var key in buffer.Keys) {
+        foreach (var key in buffer.Keys.ToList()) {
             buffer[key] = 0;
         }
-        return res;
-    }
 
-    public int[] FlushUpdates () {
-        var res = new int[updates.Count];
-        var buf = updates.ToArray();
-        for (var i = 0; i < updates.Count; i++) {
-            res[i] = buf[i];
-        }
-        updates.Clear();
         return res;
-    }
-
-    public void AddUpdates(int upd) {
-        updates.Add(upd);
     }
 }

@@ -154,12 +154,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b63f08738f4d2164a9c3f2b52898b073, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fractionObj:
-  - fractionObj: {fileID: 4532783429507838088, guid: ec03196088235cf419f21ee165a0e65e, type: 3}
-    material: {fileID: 2100000, guid: 61c82eab470e9a54cae29840cd647467, type: 2}
-  - fractionObj: {fileID: 3033390886075591521, guid: 1bf5a91312ed20640a3f0709dd8fc0bb, type: 3}
-    material: {fileID: 2100000, guid: faab91fd15acd864bb4391394cec1580, type: 2}
   creator: {fileID: 5981389338449900601, guid: 7aaf59010171a8942a866f677376d1dc, type: 3}
+  fillerObj: {fileID: 4737763354344159616, guid: 3b483b2fd94a81b4e8ce13a229410a00, type: 3}
+  updateSeconds: 0
+  updateMilliSeconds: 100
+  create: 0
 --- !u!4 &89649740
 Transform:
   m_ObjectHideFlags: 0
@@ -223,7 +222,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 89649738}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,7 +393,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1, z: -100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
