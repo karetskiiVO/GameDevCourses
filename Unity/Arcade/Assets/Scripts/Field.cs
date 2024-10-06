@@ -40,7 +40,7 @@ public class Field : MonoBehaviour {
     }
 
     public void Spawn () {
-        map = creator.GetComponent<IFieldCreator>().CreateField(this);
+        map = creator.GetComponent<FieldCreator>().CreateField(this);
     }
 
     private void Start() {
