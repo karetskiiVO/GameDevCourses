@@ -1,13 +1,11 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThoroidCreator : FieldCreator {
-    [SerializeField]float extrnalRadius  = 40;
-    [SerializeField]float internalRadius = 10;
-    [SerializeField]int layersCnt        = 10;
-    [SerializeField]int layersSize       = 10;
+public class BallCreator : FieldCreator {
+    [SerializeField]float radius     = 40;
+    [SerializeField]int   layersCnt  = 10;
+    [SerializeField]int   layersSize = 10;
 
     public override Tile[] CreateField(Field field) {
         var buf = new List<Tile>();
@@ -16,19 +14,20 @@ public class ThoroidCreator : FieldCreator {
         var tiles = new Dictionary<Vector2Int, Tile>();
 
         float hDeltaAng = 2 * Mathf.PI / layersCnt;
-        float vDeltaAng = 2 * Mathf.PI / layersSize;
+        float vDeltaAng = Mathf.PI / (layersSize + 2);
+        
+        Vector3 createPoint(float hAng, float vAng) {
+            var distance = radius * Mathf.Cos(vAng + vDeltaAng - Mathf.PI / 2);
+            return new Vector3(
+                distance * Mathf.Cos(hAng),
+                radius   * Mathf.Sin(vAng + vDeltaAng - Mathf.PI / 2),
+                distance * Mathf.Sin(hAng)
+            );
+        }
+        
         // Создаем бессвязное поле и Mesh под него
         for (var x = 0; x < layersCnt; x++) {
             for (var y = 0; y < layersSize; y++) {
-                Vector3 createPoint(float hAng, float vAng) {
-                    var distance = extrnalRadius + internalRadius * Mathf.Cos(vAng);
-                    return new Vector3(
-                        distance * Mathf.Cos(hAng),
-                        internalRadius * Mathf.Sin(vAng),
-                        distance * Mathf.Sin(hAng)
-                    );
-                }
-
                 var position = new Vector2Int(x, y);
                 var tr1 = meshAccumulator.Add(
                     edge:   (   
@@ -57,6 +56,26 @@ public class ThoroidCreator : FieldCreator {
             }
         }
 
+        // отдельно крышки
+        // // верхняя
+        // var topTr = new List<int>();
+        // var botTr = new List<int>();
+        // for (var x = 0; x < layersCnt; x++) {
+        //     var position = new Vector2Int(x, layersSize - 1);
+        //     var topTr = meshAccumulator.Add(
+        //         edge:   (   
+        //             createPoint((x + 1) * hDeltaAng, y * vDeltaAng),
+        //             createPoint(x * hDeltaAng, y * vDeltaAng), 
+        //             createPoint(x * hDeltaAng, (y + 1)* vDeltaAng)
+        //         ),
+        //         uvedge: (position + Vector2.zero, position + Vector2.up, position + Vector2.right)
+        //     )
+            
+        //     //topTr.Add()
+
+
+        // }
+
         if (field.GetComponent<MeshFilter>().mesh == null) field.GetComponent<MeshFilter>().mesh = new Mesh();
         var mesh = field.GetComponent<MeshFilter>().mesh;
         mesh.Clear();
@@ -82,12 +101,11 @@ public class ThoroidCreator : FieldCreator {
                 foreach (var direction in directions) {
                     var bufPosition = position + direction;
 
-                    bufPosition.x = (bufPosition.x + layersCnt ) % layersCnt;
-                    bufPosition.y = (bufPosition.y + layersSize) % layersSize;
+                    if (0 <= bufPosition.y && bufPosition.y < layersSize) {
+                        bufPosition.x = (bufPosition.x + layersCnt) % layersCnt;
 
-        
-
-                    neighboursList.Add(tiles[bufPosition]);
+                        neighboursList.Add(tiles[bufPosition]);
+                    }
                 }
 
                 tile.neightbours = neighboursList.ToArray();                    
