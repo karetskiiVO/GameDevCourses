@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2577829187419369937}
-  - component: {fileID: 2577829187419369950}
+  - component: {fileID: 7664869001729358016}
   m_Layer: 0
   m_Name: BallCreator
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2577829187419369950
+--- !u!114 &7664869001729358016
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,5 +44,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 40
-  layersCnt: 50
+  layersCnt: 140
   layersSize: 50
