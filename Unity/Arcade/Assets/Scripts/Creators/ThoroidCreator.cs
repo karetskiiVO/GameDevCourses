@@ -9,7 +9,7 @@ public class ThoroidCreator : FieldCreator {
     [SerializeField]int layersCnt        = 10;
     [SerializeField]int layersSize       = 10;
 
-    public override Tile[] CreateField(Field field) {
+    protected override (List<Tile>, MeshAccumulator) LogicalCreateField (Field field) {
         var buf = new List<Tile>();
         
         var meshAccumulator = new MeshAccumulator();        
@@ -30,40 +30,29 @@ public class ThoroidCreator : FieldCreator {
                 }
 
                 var position = new Vector2Int(x, y);
-                var tr1 = meshAccumulator.Add(
-                    edge:   (   
-                        createPoint((x + 1) * hDeltaAng, y * vDeltaAng),
-                        createPoint(x * hDeltaAng, y * vDeltaAng), 
-                        createPoint(x * hDeltaAng, (y + 1)* vDeltaAng)
+                
+                var newTile = meshAccumulator.NewTile(new MeshAccumulator.TileEdge[] {
+                    new MeshAccumulator.TileEdge(
+                        edge:   (   
+                            createPoint((x + 1) * hDeltaAng, y * vDeltaAng),
+                            createPoint(x * hDeltaAng, y * vDeltaAng), 
+                            createPoint(x * hDeltaAng, (y + 1)* vDeltaAng)
+                        ),
+                        uvedge: (position + Vector2.zero, position + Vector2.up, position + Vector2.right)
                     ),
-                    uvedge: (position + Vector2.zero, position + Vector2.up, position + Vector2.right)
-                );
-                var tr2 = meshAccumulator.Add(
-                    edge:   (   
-                        createPoint((x + 1) * hDeltaAng, (y + 1) * vDeltaAng),
-                        createPoint((x + 1) * hDeltaAng, y * vDeltaAng), 
-                        createPoint(x * hDeltaAng, (y + 1)* vDeltaAng)
-                    ),
-                    uvedge: (position + Vector2.up + Vector2.right, position + Vector2.right, position + Vector2.up)
-                );
-                int[] idxes = new int[] {
-                    tr1.Item1, tr1.Item2, tr1.Item3,
-                    tr2.Item1, tr2.Item2, tr2.Item3,
-                };
-
-                var newTile = new Tile(idxes);
+                    new MeshAccumulator.TileEdge(
+                        edge:   (   
+                            createPoint((x + 1) * hDeltaAng, (y + 1) * vDeltaAng),
+                            createPoint((x + 1) * hDeltaAng, y * vDeltaAng), 
+                            createPoint(x * hDeltaAng, (y + 1)* vDeltaAng)
+                        ),
+                        uvedge: (position + Vector2.up + Vector2.right, position + Vector2.right, position + Vector2.up)
+                    )
+                });
                 tiles.Add(position, newTile);
                 buf.Add(newTile);
             }
         }
-
-        if (field.GetComponent<MeshFilter>().mesh == null) field.GetComponent<MeshFilter>().mesh = new Mesh();
-        var mesh = field.GetComponent<MeshFilter>().mesh;
-        mesh.Clear();
-
-        mesh.vertices  = meshAccumulator.Vertices();
-        mesh.uv        = meshAccumulator.UV();
-        mesh.triangles = meshAccumulator.Triangles();
 
         // Настраиваем связи
         Vector2Int[] directions = {
@@ -94,10 +83,7 @@ public class ThoroidCreator : FieldCreator {
             }
         }
 
-        var res = new Tile[buf.Count];
-        buf.ToArray().CopyTo(res, 0);
-        
-        return res;
+        return (buf, meshAccumulator);
     }
 }
 

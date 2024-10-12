@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4737763354344159622}
-  - component: {fileID: 4737763354344159617}
+  - component: {fileID: 7164401136572097311}
   m_Layer: 0
   m_Name: RandomFiller
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4737763354344159617
+--- !u!114 &7164401136572097311
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,7 +40,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4737763354344159616}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35d3e71e01c24124f9397e4e39d04095, type: 3}
+  m_Script: {fileID: 11500000, guid: a13fb3dd518fee445b16a8130f579042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   defaultFractionIdx: 0
@@ -49,3 +49,5 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 61c82eab470e9a54cae29840cd647467, type: 2}
   - fractionObj: {fileID: 3033390886075591521, guid: 1bf5a91312ed20640a3f0709dd8fc0bb, type: 3}
     material: {fileID: 2100000, guid: faab91fd15acd864bb4391394cec1580, type: 2}
+  - fractionObj: {fileID: 4292345814708049485, guid: a3115077586fedf4198a9b71f0be2521, type: 3}
+    material: {fileID: 2100000, guid: c430a514c8645854da207389b00e6c29, type: 2}

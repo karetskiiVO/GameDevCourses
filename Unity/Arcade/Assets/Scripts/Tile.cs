@@ -13,14 +13,25 @@ public class Tile {
         next = fraction.Interact(this);
     }
 
-    public void Flush () {
-        fraction = next;
+    public void Flush (bool tonext = true) {
+        if (tonext) fraction = next;
         foreach (var idx in polygonidx) fraction.AddUpdates(idx);
     }
 
     public void Init (Fraction fraction) {
         next = fraction;
         Flush();
+    }
+
+    public Tile (List<int> polygonidx) {
+        this.polygonidx = new int[polygonidx.Count];
+        polygonidx.CopyTo(this.polygonidx, 0);
+    }
+
+    public Tile (List<int> polygonidx, Tile[] neightbours) {
+        this.polygonidx = new int[polygonidx.Count];
+        polygonidx.CopyTo(this.polygonidx, 0);
+        this.neightbours = (Tile[])neightbours.Clone();
     }
 
     public Tile (int[] polygonidx) {

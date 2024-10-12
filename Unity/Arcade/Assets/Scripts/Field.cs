@@ -16,13 +16,18 @@ public class Field : MonoBehaviour {
     private MeshRenderer meshRenderer = null;
     private Mesh mesh = null; 
     private FieldFiller filler = null;
+    private DateTime lastUpdate = DateTime.Now;
 
-    private Tile[] map;
+    public Tile[] map;
+    public Tile[] tilesFromEdgeIdeces;
+
     private FieldFiller.FractionInfo[] fractionsInfo;
 
     public FieldFiller Filler{get => filler;}
 
     [SerializeField]bool create = false;
+    [SerializeField]bool paused = false;
+
     bool created = false;
 
     private bool initiated = false;
@@ -39,11 +44,11 @@ public class Field : MonoBehaviour {
         }
     }
 
-    public void Spawn () {
-        map = creator.GetComponent<FieldCreator>().CreateField(this);
+    private void Spawn () {
+        creator.GetComponent<FieldCreator>().CreateField(this);
     }
 
-    private void Start() {
+    private void Start () {
         Spawn();
         
         stepTime = new TimeSpan(
@@ -57,6 +62,9 @@ public class Field : MonoBehaviour {
         meshRenderer = GetComponent<MeshRenderer>();
         mesh = GetComponent<MeshFilter>().mesh;
         filler = fillerObj.GetComponent<FieldFiller>();
+        
+        var meshCollider = gameObject.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = mesh;
 
         var usedMaterials = filler.Init(this);
         fractionsInfo = filler.fractionsInfo;
@@ -64,38 +72,69 @@ public class Field : MonoBehaviour {
         meshRenderer.materials = usedMaterials;
         mesh.subMeshCount = usedMaterials.Length;
 
-        foreach (var tile in map) {
-            tile.Init(Filler.Generate(tile)); 
-        }
+        Filler.DefaultFill();
 
-        foreach (var fractionInfo in fractionsInfo) {
-            mesh.SetTriangles(fractionInfo.fraction.FlushUpdates(), fractionInfo.subMeshIdx);
-        }
+        Flush();
 
         initiated = true;
     }
 
-    private DateTime lastUpdate = DateTime.Now;
+    public void Fill () {
+        Filler.Fill();
+        Flush();
+    }
+    private void DefaultFill () { Filler.DefaultFill(); }
     private void FixedUpdate () {
         var now = DateTime.Now;
 
         if (!initiated) return;
-        if (now - lastUpdate < stepTime) return;
+        if (!paused && (now - lastUpdate < stepTime)) return;
+
         Step();
         lastUpdate = now;
     }
     
     private void Step () {
         foreach (var tile in map) tile.Interact();
-        foreach (var tile in map) tile.Flush();
+        foreach (var tile in map) tile.Flush(!paused);
 
+        Flush();
+    }
+    private void Flush () {
         foreach (var fractionInfo in fractionsInfo) {
             mesh.SetTriangles(fractionInfo.fraction.FlushUpdates(), fractionInfo.subMeshIdx);
         }
     }
-
-    private void Clear() {
+    private void Clear () {
         if (map != null) Array.Clear(map, 0, map.Length);
         GetComponent<MeshFilter>().sharedMesh.Clear();
+    }
+
+    public Tile GetTileFromEdgeIdx (int idx) {
+        return tilesFromEdgeIdeces[idx];
+    }
+
+    public void PauseGame () { paused = true; }
+    public void StartGame () { paused = false; }
+
+    public void SwitchPause () { paused = !paused; }
+
+    public bool Paused{ get => paused; }
+
+    public void NewGame () { NewGame(null); }
+    public void NewGame (GameObject creator) {
+        if (creator == null || ReferenceEquals(creator, this.creator)) {
+            PauseGame();
+            DefaultFill();
+            StartGame();
+        } else {
+            this.creator = creator;
+
+            PauseGame();
+            Clear();
+            Spawn();
+            DefaultFill();
+            StartGame();
+        }
     }
 }

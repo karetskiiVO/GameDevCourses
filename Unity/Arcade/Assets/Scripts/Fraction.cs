@@ -5,7 +5,7 @@ public abstract class Fraction : MonoBehaviour {
     public Field field = null;
     public abstract Fraction Interact (Tile tile);
 
-    public virtual void Init (Field field) {
+    public virtual void Init (Field field, FieldFiller filler) {
         this.field = field;
     }
 
@@ -19,7 +19,7 @@ public abstract class Fraction : MonoBehaviour {
         return res;
     }
 
-    public void AddUpdates(int upd) {
+    public void AddUpdates (int upd) {
         updates.Add(upd);
     }
 }

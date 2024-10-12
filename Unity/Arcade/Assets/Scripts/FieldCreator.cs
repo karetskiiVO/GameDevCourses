@@ -1,25 +1,44 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class FieldCreator : MonoBehaviour {
     protected class MeshAccumulator {
-        private List<Vector2> uv       = new List<Vector2>();
-        private List<Vector3> vertices = new List<Vector3>();
-        private List<int> triangles    = new List<int>();
+        private List<Vector2> uv            = new List<Vector2>();
+        private List<Vector3> vertices      = new List<Vector3>();
+        private List<int>     triangles     = new List<int>();
+        private List<Tile>    polygonToTile = new List<Tile>();
+
         private Dictionary<Vector3, int> vertIndexes = new Dictionary<Vector3, int>();
 
-        public Vector2[] UV () {
+        public Vector2[] UV            () {
             return uv.ToArray();
         }
-        public Vector3[] Vertices () {
+        public Vector3[] Vertices      () {
             return vertices.ToArray();
         }
-        public int[] Triangles () {
+        public int[]     Triangles     () {
             return triangles.ToArray();
+        }
+        public Tile[]    PolygonToTile () {
+            return polygonToTile.ToArray();
+        }
+
+        public struct TileEdge {
+            public (Vector3, Vector3, Vector3) edge;
+            public (Vector2, Vector2, Vector2) uvedge;
+
+            public TileEdge ((Vector3, Vector3, Vector3) edge, (Vector2, Vector2, Vector2) uvedge) {
+                this.edge   = edge;
+                this.uvedge = edge;
+            }
         }
 
         // Добавит грань, если часть вершин уже существует и имеют uv координаты, то новые будут проигнорированны
-        public (int, int, int) Add((Vector3, Vector3, Vector3) edge, (Vector2, Vector2, Vector2) uvedge) {
+        private (int, int, int) Add (TileEdge titeEdge) {
+            var edge   = titeEdge.edge;
+            var uvedge = titeEdge.uvedge;
             Vector3[] verts   = {  edge.Item1,   edge.Item2,   edge.Item3};
             Vector2[] uvVerts = {uvedge.Item1, uvedge.Item2, uvedge.Item3};
             int[] buf = {0, 0, 0};
@@ -48,7 +67,42 @@ public abstract class FieldCreator : MonoBehaviour {
 
             return res;
         }
+    
+        public Tile NewTile (TileEdge[] tileEdges) {
+            var idxes = new List<int>();
+
+            foreach (var tileEdge in tileEdges) {
+                var additionalIdexes = Add(tileEdge);
+
+                idxes.Add(additionalIdexes.Item1);
+                idxes.Add(additionalIdexes.Item2);
+                idxes.Add(additionalIdexes.Item3);
+            }
+
+            var res = new Tile(idxes);
+
+            for (int i = 0; i < tileEdges.Length; i++) {
+                polygonToTile.Add(res);
+            }
+            
+            return res;
+        }
     }
 
-    public abstract Tile[] CreateField (Field field);
+    protected abstract (List<Tile>, MeshAccumulator) LogicalCreateField (Field field);
+    public void CreateField (Field field) {
+        var res = LogicalCreateField(field);
+        var meshAccumulator = res.Item2;
+        field.map = res.Item1.ToArray();
+
+        if (field.GetComponent<MeshFilter>().mesh == null) field.GetComponent<MeshFilter>().mesh = new Mesh();
+        var mesh = field.GetComponent<MeshFilter>().mesh;
+        mesh.Clear();
+
+        mesh.vertices  = meshAccumulator.Vertices();
+        mesh.uv        = meshAccumulator.UV();
+        mesh.triangles = meshAccumulator.Triangles();
+
+        field.tilesFromEdgeIdeces = meshAccumulator.PolygonToTile();
+    }
 }

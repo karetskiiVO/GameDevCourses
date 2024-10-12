@@ -9,9 +9,9 @@ using System.Runtime.InteropServices.ComTypes;
 public class NoFraction : Fraction {
     private Dictionary<Fraction, int> buffer = new Dictionary<Fraction, int>();
 
-    public override void Init (Field field) {
+    public override void Init (Field field, FieldFiller filler) {
         this.field = field;
-        foreach (var fractionInfo in field.Filler.fractionsInfo) buffer[fractionInfo.fraction] = 0;
+        foreach (var fractionInfo in filler.fractionsInfo) buffer[fractionInfo.fraction] = 0;
     }
 
     public override Fraction Interact (Tile tile) {

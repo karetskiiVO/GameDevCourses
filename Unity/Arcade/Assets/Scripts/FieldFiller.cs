@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class FieldFiller : MonoBehaviour {
+public abstract class FieldFiller : MonoBehaviour {
     [Serializable]
-    struct FractionConfig {
+    protected struct FractionConfig {
         public GameObject fractionObj;
         public Material material;
     }
@@ -14,32 +15,41 @@ public class FieldFiller : MonoBehaviour {
         public int subMeshIdx;
     }
 
-    [SerializeField]int defaultFractionIdx = 0;
+    [SerializeField]protected int defaultFractionIdx = 0;
     [SerializeField]FractionConfig[] fractionObj;
+
+    public int DefaultFractionIdx{ get => defaultFractionIdx; }
+
     public FractionInfo[] fractionsInfo;
+    protected Field field;
 
-    public Fraction DefaultFraction{get => fractionsInfo[defaultFractionIdx].fraction;}
-    private readonly System.Random random = new System.Random();
+    public Fraction DefaultFraction{ get => fractionsInfo[defaultFractionIdx].fraction; }
 
-    public Material[] Init (Field field) {
+    public virtual Material[] Init (Field field) {
+        this.field = field;
+
         fractionsInfo = new FractionInfo[fractionObj.Length];
         var usedMaterials = new Material[fractionObj.Length];
 
         for (var i = 0; i < fractionObj.Length; i++) {
             fractionsInfo[i].fraction = fractionObj[i].fractionObj.GetComponent<Fraction>();
-            
             fractionsInfo[i].subMeshIdx = i;
+            
             usedMaterials[i] = fractionObj[i].material;
         }
-
+        
         foreach (var fractionInfo in fractionsInfo) {
-            fractionInfo.fraction.Init(field);
+            fractionInfo.fraction.Init(field, this);
         }
 
         return usedMaterials;
     }
 
-    public Fraction Generate (Tile _) {
-        return fractionsInfo[random.Next(0, fractionsInfo.Length)].fraction;
+    public void DefaultFill () {
+        foreach (var tile in field.map) {
+            tile.Init(DefaultFraction);
+        }
     }
+
+    public abstract void Fill ();
 }
