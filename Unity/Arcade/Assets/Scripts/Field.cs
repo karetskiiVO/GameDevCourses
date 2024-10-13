@@ -7,15 +7,15 @@ using UnityEngine.Rendering;
 
 public class Field : MonoBehaviour {
     [SerializeField]GameObject creator = null;
-    [SerializeField]GameObject fillerObj = null;
+    [SerializeField]FieldFiller filler = null;
     // time controller
     [SerializeField]int updateSeconds = 1;
     [SerializeField]int updateMilliSeconds = 0;
 
     private TimeSpan stepTime;
     private MeshRenderer meshRenderer = null;
-    private Mesh mesh = null; 
-    private FieldFiller filler = null;
+    private Mesh mesh = null;
+    private MeshCollider meshCollider = null;
     private DateTime lastUpdate = DateTime.Now;
 
     public Tile[] map;
@@ -23,7 +23,7 @@ public class Field : MonoBehaviour {
 
     private FieldFiller.FractionInfo[] fractionsInfo;
 
-    public FieldFiller Filler{get => filler;}
+    public FieldFiller Filler{ get => filler; }
 
     [SerializeField]bool create = false;
     [SerializeField]bool paused = false;
@@ -46,9 +46,20 @@ public class Field : MonoBehaviour {
 
     private void Spawn () {
         creator.GetComponent<FieldCreator>().CreateField(this);
+
+        var usedMaterials = filler.Init(this);
+        fractionsInfo = filler.fractionsInfo;
+        meshRenderer.materials = usedMaterials;
+        mesh.subMeshCount = usedMaterials.Length;
+
+        meshCollider.sharedMesh = mesh;
     }
 
     private void Start () {
+        meshRenderer = GetComponent<MeshRenderer>();
+        mesh = GetComponent<MeshFilter>().mesh;
+        meshCollider = gameObject.AddComponent<MeshCollider>();
+        
         Spawn();
         
         stepTime = new TimeSpan(
@@ -58,19 +69,6 @@ public class Field : MonoBehaviour {
             seconds:      updateSeconds, 
             milliseconds: updateMilliSeconds
         );
-
-        meshRenderer = GetComponent<MeshRenderer>();
-        mesh = GetComponent<MeshFilter>().mesh;
-        filler = fillerObj.GetComponent<FieldFiller>();
-        
-        var meshCollider = gameObject.AddComponent<MeshCollider>();
-        meshCollider.sharedMesh = mesh;
-
-        var usedMaterials = filler.Init(this);
-        fractionsInfo = filler.fractionsInfo;
-
-        meshRenderer.materials = usedMaterials;
-        mesh.subMeshCount = usedMaterials.Length;
 
         Filler.DefaultFill();
 
@@ -83,7 +81,11 @@ public class Field : MonoBehaviour {
         Filler.Fill();
         Flush();
     }
-    private void DefaultFill () { Filler.DefaultFill(); }
+    private void DefaultFill () {
+        if (!initiated) return;
+
+        Filler.DefaultFill();
+    }
     private void FixedUpdate () {
         var now = DateTime.Now;
 
@@ -101,6 +103,8 @@ public class Field : MonoBehaviour {
         Flush();
     }
     private void Flush () {
+        if (!initiated) return;
+
         foreach (var fractionInfo in fractionsInfo) {
             mesh.SetTriangles(fractionInfo.fraction.FlushUpdates(), fractionInfo.subMeshIdx);
         }
@@ -129,7 +133,7 @@ public class Field : MonoBehaviour {
             StartGame();
         } else {
             this.creator = creator;
-
+            
             PauseGame();
             Clear();
             Spawn();

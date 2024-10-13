@@ -5,19 +5,22 @@ using UnityEngine;
 using UnityEngine.Assertions.Must;
 
 public class MouseShellFiller : FieldFiller {
-    [SerializeField]GameObject logicInstanceObj = null;
-    FieldFiller logicInstance = null;
+    [SerializeField]FieldFiller logicInstance = null;
+    private int fillFractionIdx = 0;
 
     public override Material[] Init (Field field) {
         this.field = field; 
 
-        logicInstance = logicInstanceObj.GetComponent<FieldFiller>();
         var res = logicInstance.Init(field);
 
         fractionsInfo = logicInstance.fractionsInfo;
         defaultFractionIdx = logicInstance.DefaultFractionIdx;
 
         return res;
+    }
+
+    public void NextFraction () {
+        fillFractionIdx = (fillFractionIdx + 1) % fractionsInfo.Length;
     }
 
     private void Update () {
@@ -30,7 +33,7 @@ public class MouseShellFiller : FieldFiller {
                     var tile = currField.GetTileFromEdgeIdx(hitInfo.triangleIndex);
 
                     // TODO chnge
-                    tile.fraction = fractionsInfo[1].fraction;
+                    tile.fraction = fractionsInfo[fillFractionIdx].fraction;
                     tile.Flush(false);
                 }
             }
