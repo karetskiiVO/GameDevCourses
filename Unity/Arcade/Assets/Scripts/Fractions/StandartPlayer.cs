@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class StandartPlayer : Fraction {
     public override Fraction Interact (Tile tile) {
         int cnt = 0;

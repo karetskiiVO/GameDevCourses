@@ -1,9 +1,5 @@
-using System;
 using System.Linq;
 using System.Collections.Generic;
-using UnityEngine;
-using MiscUtil.Collections.Extensions;
-using System.Runtime.InteropServices.ComTypes;
 
 // TODO рандомный прирост
 public class NoFraction : Fraction {

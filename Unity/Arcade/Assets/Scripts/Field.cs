@@ -1,14 +1,9 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class Field : MonoBehaviour {
     [SerializeField]GameObject creator = null;
     [SerializeField]FieldFiller filler = null;
-    // time controller
     [SerializeField]int updateSeconds = 1;
     [SerializeField]int updateMilliSeconds = 0;
 
@@ -18,6 +13,7 @@ public class Field : MonoBehaviour {
     private MeshCollider meshCollider = null;
     private DateTime lastUpdate = DateTime.Now;
 
+    public FieldCameraController controller;
     public Tile[] map;
     public Tile[] tilesFromEdgeIdeces;
 
@@ -86,11 +82,21 @@ public class Field : MonoBehaviour {
 
         Filler.DefaultFill();
     }
+    
+    private readonly TimeSpan pauseStepTime = new TimeSpan(
+        days:         0,
+        hours:        0,
+        minutes:      0,
+        seconds:      0, 
+        milliseconds: 30
+    );
+
     private void FixedUpdate () {
         var now = DateTime.Now;
 
         if (!initiated) return;
         if (!paused && (now - lastUpdate < stepTime)) return;
+        if (paused && (now - lastUpdate < pauseStepTime)) return;
 
         Step();
         lastUpdate = now;

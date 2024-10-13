@@ -1,14 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public abstract class FieldCreator : MonoBehaviour {
     protected class MeshAccumulator {
-        private List<Vector2> uv            = new List<Vector2>();
-        private List<Vector3> vertices      = new List<Vector3>();
-        private List<int>     triangles     = new List<int>();
-        private List<Tile>    polygonToTile = new List<Tile>();
+        private readonly List<Vector2> uv            = new List<Vector2>();
+        private readonly List<Vector3> vertices      = new List<Vector3>();
+        private readonly List<int>     triangles     = new List<int>();
+        private readonly List<Tile>    polygonToTile = new List<Tile>();
 
         private Dictionary<Vector3, int> vertIndexes = new Dictionary<Vector3, int>();
 
@@ -90,6 +88,7 @@ public abstract class FieldCreator : MonoBehaviour {
     }
 
     protected abstract (List<Tile>, MeshAccumulator) LogicalCreateField (Field field);
+    protected abstract FieldCameraController ActualController ();
     public void CreateField (Field field) {
         var res = LogicalCreateField(field);
         var meshAccumulator = res.Item2;
@@ -104,5 +103,6 @@ public abstract class FieldCreator : MonoBehaviour {
         mesh.triangles = meshAccumulator.Triangles();
 
         field.tilesFromEdgeIdeces = meshAccumulator.PolygonToTile();
+        field.controller = ActualController();
     }
 }

@@ -1,7 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
-using Unity.VisualScripting;
-using UnityEditor;
 
 public class Tile {
     private Fraction next = null;

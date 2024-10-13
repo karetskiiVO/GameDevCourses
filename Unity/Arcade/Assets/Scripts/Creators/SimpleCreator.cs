@@ -1,15 +1,12 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.Search;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class SimpleCreator : FieldCreator {
     [SerializeField]Vector2Int size = new Vector2Int(12, 12);
+
+    protected override FieldCameraController ActualController () {
+        return new PlaneCameraController(Vector3.forward);
+    }
 
     protected override (List<Tile>, MeshAccumulator) LogicalCreateField (Field field) {
         var buf = new List<Tile>();

@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +6,10 @@ public class ThoroidCreator : FieldCreator {
     [SerializeField]float internalRadius = 10;
     [SerializeField]int layersCnt        = 10;
     [SerializeField]int layersSize       = 10;
+
+    protected override FieldCameraController ActualController () {
+        return new SphereCameraController(Vector3.zero, 2 * (extrnalRadius + internalRadius));
+    }
 
     protected override (List<Tile>, MeshAccumulator) LogicalCreateField (Field field) {
         var buf = new List<Tile>();
