@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class Tile {
     private Fraction next = null;
-    private readonly int[] polygonidx;
+    public readonly int[] polygonidx;
     public Fraction fraction = null;
     public Tile[] neightbours;
 
@@ -11,8 +11,9 @@ public class Tile {
     }
 
     public void Flush (bool tonext = true) {
+        var prev = fraction;
         if (tonext) fraction = next;
-        foreach (var idx in polygonidx) fraction.AddUpdates(idx);
+        fraction.AddTileToUpdates(this, prev);
     }
 
     public void Init (Fraction fraction) {

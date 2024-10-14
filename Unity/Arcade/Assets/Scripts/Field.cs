@@ -22,7 +22,7 @@ public class Field : MonoBehaviour {
     public FieldFiller Filler{ get => filler; }
 
     [SerializeField]bool create = false;
-    [SerializeField]bool paused = false;
+    [SerializeField]bool paused = true;
 
     bool created = false;
 
@@ -82,7 +82,17 @@ public class Field : MonoBehaviour {
 
         Filler.DefaultFill();
     }
-    
+
+    public void UpdateTimeSpan (int milliseconds) {
+        stepTime = new TimeSpan(
+        days:         0,
+        hours:        0,
+        minutes:      0,
+        seconds:      0, 
+        milliseconds: milliseconds
+    );
+    }
+
     private readonly TimeSpan pauseStepTime = new TimeSpan(
         days:         0,
         hours:        0,
@@ -140,11 +150,12 @@ public class Field : MonoBehaviour {
         } else {
             this.creator = creator;
             
+            var waspaused = paused;
             PauseGame();
             Clear();
             Spawn();
             DefaultFill();
-            StartGame();
+            paused = waspaused;
         }
     }
 }

@@ -28,7 +28,6 @@ public class MouseShellFiller : FieldFiller {
                 if (hitInfo.collider.gameObject.TryGetComponent<Field>(out var currField)) {
                     var tile = currField.GetTileFromEdgeIdx(hitInfo.triangleIndex);
 
-                    // TODO chnge
                     tile.fraction = fractionsInfo[fillFractionIdx].fraction;
                     tile.Flush(false);
                 }
