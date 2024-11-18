@@ -1,6 +1,9 @@
 #include "Engine.h"
-#include <stdlib.h>
-#include <memory.h>
+#include <cstdlib>
+#include <memory>
+
+#include <gameengine.h>
+#include "test.h"
 
 //
 //  You are free to modify this file
@@ -15,24 +18,42 @@
 //  is_window_active() - returns true if window is active
 //  schedule_quit_game() - quit game after act()
 
+game::GameEngine* gameEngine = nullptr;
+
 
 // initialize game data in this function
 void initialize () {
+    gameEngine = new game::GameEngine(
+        game::Camera(
+            reinterpret_cast<uint32_t*>(buffer), 
+            SCREEN_HEIGHT,
+            SCREEN_WIDTH,
+            game::Transform()
+    ));
+
+    auto testGameObject = new game::GameObject(game::Transform{}, new PointRenderer());
+    auto mover = new Mover{
+        &testGameObject->transform,
+        geom::Vector2f(0, 10)        
+    };
+    testGameObject->components.push_back(mover);
+
+    gameEngine->add(testGameObject);
 }
 
 // this function is called to update game data,
 // dt - time elapsed since the previous update (in seconds)
 void act (float dt) {
-  if (is_key_pressed(VK_ESCAPE))
-    schedule_quit_game();
+    gameEngine->update(dt);
+
+    if (is_key_pressed(VK_ESCAPE))
+        schedule_quit_game();
 }
 
 // fill buffer in this function
 // uint32_t buffer[SCREEN_HEIGHT][SCREEN_WIDTH] - is an array of 32-bit colors (8 bits per R, G, B)
 void draw () {
-  // clear backbuffer
-  memset(buffer, 0, SCREEN_HEIGHT * SCREEN_WIDTH * sizeof(uint32_t));
-
+    gameEngine->render();
 }
 
 // free game data in this function
