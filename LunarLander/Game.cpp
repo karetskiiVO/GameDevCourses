@@ -29,16 +29,28 @@ void initialize () {
             SCREEN_HEIGHT,
             SCREEN_WIDTH,
             game::Transform()
+        )
+    );
+
+    gameEngine->camera.transform.position = geom::Vector2f{10, 0};
+
+    auto testGameObject1 = new game::GameObject(game::Transform{}, new SegmentRenderer(
+        geom::Vector2f(10, 0),
+        geom::Vector2f(0, 0)
     ));
+    auto testGameObject2 = new game::GameObject(game::Transform{}, new SegmentRenderer(
+        geom::Vector2f(0, 10),
+        geom::Vector2f(0, 0)
+    ));
+    // auto mover = new Mover{
+    //     &gameEngine->camera.transform,
+    //     geom::Vector2f(0, 10)        
+    // };
+    // testGameObject->components.push_back(mover);
 
-    auto testGameObject = new game::GameObject(game::Transform{}, new PointRenderer());
-    auto mover = new Mover{
-        &testGameObject->transform,
-        geom::Vector2f(0, 10)        
-    };
-    testGameObject->components.push_back(mover);
-
-    gameEngine->add(testGameObject);
+    // gameEngine->add(testGameObject);
+    gameEngine->add(testGameObject1);
+    gameEngine->add(testGameObject2);
 }
 
 // this function is called to update game data,

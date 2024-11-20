@@ -14,7 +14,11 @@ public:
 
     Rotation operator+ (Rotation r) const;
     Rotation operator- (Rotation r) const;
+    Rotation operator- () const;
     Vector2f operator* (Vector2f vect) const;
+
+    Rotation& operator+= (Rotation r);
+    Rotation& operator-= (Rotation r);
 
     Vector2f direction() const;
 };

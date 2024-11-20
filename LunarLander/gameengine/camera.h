@@ -37,8 +37,16 @@ public:
         memset(screen, 0, height * width * sizeof(uint32_t));
     }
 
-    void drawPoint   (geom::Point coord, RGBColor color, float radius) {
-        auto localCoord = coord - transform.position;
+    void drawPixel (int x, int y, RGBColor color) {
+        auto screenx = x + width/2;
+        auto screeny = height/2 - y;
+
+        if (0 <= screenx && screenx < width &&
+            0 <= screeny && screeny < height)  screen[screeny * width + screenx] = color.col;
+    }
+
+    void drawCircle (geom::Point coord, RGBColor color, float radius) {
+        auto localCoord = (-transform.rotation) * (coord - transform.position);
 
         // in field
         int radiusInt  = std::max(1, static_cast<int>(std::round(radius * scale)));
@@ -49,15 +57,50 @@ public:
             for (int x = -radiusInt; x < radiusInt; x++) {
                 if (x*x + y*y > radiusInt*radiusInt) continue;
 
-                auto screenx = width/2  - (x + xCenter);
-                auto screeny = height/2 - (y + yCenter);
-
-                if (0 <= screenx && screenx < width &&
-                    0 <= screeny && screeny < height)  screen[screeny * width + screenx] = color.col;
+                drawPixel(x + xCenter, y + yCenter, color);
             }
         }
     }
-    void drawSegment (geom::Vector2f coord, RGBColor col, uint8_t thik = 3) {}
+    void drawSegment (geom::Vector2f start, geom::Vector2f end, RGBColor color, uint8_t thik = 3) {
+        auto localStart = (-transform.rotation) * (start - transform.position);
+        auto localEnd   = (-transform.rotation) * (  end - transform.position);
+
+        auto xStart = static_cast<int>(std::round(localStart.x * scale));
+        auto yStart = static_cast<int>(std::round(localStart.y * scale));
+        auto xEnd   = static_cast<int>(std::round(  localEnd.x * scale));
+        auto yEnd   = static_cast<int>(std::round(  localEnd.y * scale));
+
+        int xerr = 0, yerr = 0; 
+        int dx = xEnd - xStart;
+        int dy = yEnd - yStart;
+
+        int incX = (dx == 0) ? 0 : (dx / std::abs(dx));
+        int incY = (dy == 0) ? 0 : (dy / std::abs(dy));
+
+        dx = std::abs(dx);
+        dy = std::abs(dy);
+
+        int d = std::max(dx, dy);
+
+        int x = xStart;
+        int y = yStart;
+
+        for (int i = 0; i <= d; i++) {
+            xerr += dx;
+            yerr += dy;
+
+            if (xerr >= d) {
+                xerr -= d;
+                x += incX;
+            }    
+            if (yerr >= d) {
+                yerr -= d;
+                y += incY;
+            }
+
+            drawPixel(x, y, color);
+        }
+    }
 };
 
 }
