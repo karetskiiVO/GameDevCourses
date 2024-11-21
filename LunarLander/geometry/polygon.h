@@ -83,15 +83,15 @@ std::vector<Polygon> splitToConvex (Polygon poly) {
         if ((end - begin + poly.verticies.size()) % poly.verticies.size() <= 1) return;
 
         if ((end - begin + poly.verticies.size()) % poly.verticies.size() == 2) {
-            res.push_back(Polygon{{poly.verticies.begin() + begin, poly.verticies.begin() + end}});
+            res.push_back(Polygon{{poly.verticies.begin() + begin, poly.verticies.begin() + end - 1}});
             return;
         }
 
         std::vector<Point> current = {poly.verticies[begin], poly.verticies[(begin + 1) % poly.verticies.size()]};
 
         Vector2f prevEdge = current[1] - current[0];
-        size_t prevVert = (begin + 1) % poly.verticies.size();
-        for (size_t newVert = begin + 2;; newVert = (newVert + 1) % poly.verticies.size()) {
+        size_t prevVert = begin + 1;
+        for (size_t newVert = begin + 2; newVert < end; newVert++) {
             Vector2f currEdge = poly.verticies[newVert] - current.back();
 
             if (cross(currEdge, prevEdge) < 0) continue;
@@ -101,13 +101,10 @@ std::vector<Polygon> splitToConvex (Polygon poly) {
             
             prevEdge = currEdge;
             prevVert = newVert;
-
-            if (newVert == end) break;
         }
 
         createConvex(prevVert, end);
 
-        if ((current[0] - current.back()).magnitude2() < 1e-7) current.pop_back();
         res.push_back(current);
     };
 

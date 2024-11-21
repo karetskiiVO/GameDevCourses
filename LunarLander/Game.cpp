@@ -34,12 +34,18 @@ void initialize () {
     auto polygon = geom::Polygon({
         {-4.31f,  2.40f},
         {-1.00f,  5.00f},
+
+        { 0.70f,  4.82f},
+        { 0.43f,  6.62f},
+        { 3.23f,  6.32f},
+        { 2.14f,  4.67f},
+
         { 3.95f,  4.48f},
         { 3.63f,  2.08f},
         {-1.99f,  0.72f},
         {-0.17f, -4.08f},
         {-0.07f, -7.16f},
-        {-4.73f, -5.50f}
+        {-4.73f, -5.50f},
     });
 
     auto testGameObject1 = new game::GameObject(
