@@ -31,10 +31,13 @@ struct Vector2 {
     }
 
     Vector2 operator+ (Vector2 vector) const {
-        return {x + vector.x, y + vector.y};
+        return Vector2{x + vector.x, y + vector.y};
     }
     Vector2 operator- (Vector2 vector) const {
-        return {x - vector.x, y - vector.y};
+        return Vector2{x - vector.x, y - vector.y};
+    }
+    Vector2 operator- () const {
+        return Vector2{-x, -y};
     }
 
     Vector2& operator+= (Vector2 vector) {

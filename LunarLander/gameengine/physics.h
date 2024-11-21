@@ -70,8 +70,8 @@ IntersectionInfo& polygonIntersection (
 
     auto separateAxis = [] (const geom::Polygon& poly, const Transform& tr, geom::Vector2f axis) -> LineSegment {
         auto res = LineSegment{
-            -std::numeric_limits<float>::infinity(),
-             std::numeric_limits<float>::infinity()
+             std::numeric_limits<float>::infinity(),
+            -std::numeric_limits<float>::infinity()
         };
         
         // тернарник
@@ -96,7 +96,7 @@ IntersectionInfo& polygonIntersection (
     out = IntersectionInfo{
         geom::Vector2f(),
         geom::Vector2f(),
-        std::numeric_limits<float>::infinity()
+        -std::numeric_limits<float>::infinity()
     };
 
     for (size_t i = 0; i < fst.verticies.size(); i++) {
@@ -114,11 +114,11 @@ IntersectionInfo& polygonIntersection (
             return out;
         }
 
-        if (dist > out.dist) out = {(seg1.pointmin + seg2.pointmax) / 2, axis, dist};
+        if (dist > out.dist) out = {seg1.pointmin, axis, dist};
     }
 
     for (size_t i = 0; i < snd.verticies.size(); i++) {
-        auto axis = (rot + trsnd.rotation) * (snd.verticies[(i+1) % snd.verticies.size()] - snd.verticies[i]);
+        auto axis = (- rot + trsnd.rotation) * (snd.verticies[(i+1) % snd.verticies.size()] - snd.verticies[i]);
         axis /= axis.magnitude();
 
         auto seg1 = separateAxis(fst, trfst, axis);
@@ -132,7 +132,7 @@ IntersectionInfo& polygonIntersection (
             return out;
         }
 
-        if (dist > out.dist) out = {(seg1.pointmin + seg2.pointmax) / 2, axis, dist};
+        if (dist > out.dist) out = {seg1.pointmin, axis, dist};
     }
 
     return out;

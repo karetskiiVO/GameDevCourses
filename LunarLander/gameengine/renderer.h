@@ -4,6 +4,8 @@
 #include <camera.h>
 #include <geometry.h>
 
+#include <chrono>
+
 namespace game {
 
 struct Renderer {
@@ -62,6 +64,19 @@ struct UITextRenderer : public Renderer {
         }
     }
 };
+
+struct UIFPSRenderer : public UITextRenderer {
+    void render (Camera& camera, const Transform& transform) {
+        static auto prev = std::chrono::steady_clock::now();
+        auto now = std::chrono::steady_clock::now();
+        const std::chrono::duration<double> diff{now - prev};
+
+        sprintf_s(content, 128, "fps: %.2f", 1e6f / std::chrono::duration_cast<std::chrono::microseconds>(diff).count());
+        prev = now;
+        UITextRenderer::render(camera, transform);
+    }
+};
+
 
 struct MultiRenderer : public Renderer {
     std::vector<Renderer*> renderers;

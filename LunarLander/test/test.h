@@ -22,7 +22,7 @@ public:
     DebugWriter (char* output) : content(output) {}
 
     void update (float deltatime) {
-        sprintf_s(content, 128, "distance: %.2f", distance);
+        sprintf_s(content, 128, "%s", debugLog.c_str());
     }
 };
 

@@ -13,20 +13,20 @@ Rotation::Rotation (Vector2f dir) {
 Rotation::Rotation (float cos, float sin) : cos(cos), sin(sin) {}
 
 Vector2f Rotation::direction () const {
-    return {cos, sin};
+    return Vector2f{cos, sin};
 }
 
 Rotation Rotation::operator+ (Rotation r) const {
-    return {cos * r.cos - sin * r.sin, sin * r.cos + cos * r.sin};
+    return Rotation{cos * r.cos - sin * r.sin, sin * r.cos + cos * r.sin};
 }
 Rotation Rotation::operator- (Rotation r) const {
-    return {cos * r.cos + sin * r.sin, sin * r.cos - cos * r.sin};
+    return Rotation{cos * r.cos + sin * r.sin, sin * r.cos - cos * r.sin};
 }
 Rotation Rotation::operator- () const {
     return Rotation(0) - *this;
 }
 Vector2f Rotation::operator* (Vector2f vect) const {
-    return {cos * vect.x - sin * vect.y, sin * vect.x + cos * vect.y};
+    return Vector2f{cos * vect.x - sin * vect.y, sin * vect.x + cos * vect.y};
 }
 
 Rotation& Rotation::operator+= (Rotation r) {

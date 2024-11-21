@@ -31,7 +31,14 @@ void initialize () {
         )
     );
 
-    auto polygon = geom::Polygon({
+    auto polygon = /*geom::Polygon({
+        { 10.0f,  10.0f},
+        { 10.0f, -10.0f},
+        {-10.0f, -10.0f},
+        {-10.0f,  10.0f},
+    });*/
+    
+    geom::Polygon({
         {-4.31f,  2.40f},
         {-1.00f,  5.00f},
 
@@ -81,15 +88,13 @@ void initialize () {
         )    
     );
 
-    auto fpsRenderer = new game::UITextRenderer();
+    auto fpsRenderer = new game::UIFPSRenderer();
     fpsRenderer->position = geom::Vector2i(8, 8);
     auto fpsCounterGameObject = new game::GameObject(
         game::Transform{}, 
         fpsRenderer,
         game::PhysicsBehavour()
     );
-    auto fpsCounter = new FPScounter(fpsRenderer->content);
-    fpsCounterGameObject->components.push_back(fpsCounter);
 
     auto debugRenderer = new game::UITextRenderer();
     debugRenderer->position = geom::Vector2i(8, 40);

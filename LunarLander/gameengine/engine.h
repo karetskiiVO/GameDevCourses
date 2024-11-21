@@ -2,8 +2,9 @@
 
 #include <gameobject.h>
 #include <camera.h>
+#include <string>
 
-float distance = 0;
+std::string debugLog = "";
 
 namespace game {
 
@@ -22,8 +23,7 @@ public:
     ~GameEngine () = default;
 
     void physicsUpdate (float deltatime) {
-        static geom::Polygon poly1({});
-        static geom::Polygon poly2({});
+        const geom::Rotation rot = geom::Rotation(std::acos(0.f));
 
         for (size_t fst = 0; fst < gameObjects.size(); fst++) {
             for (size_t snd = fst + 1; snd < gameObjects.size(); snd++) {
@@ -33,6 +33,7 @@ public:
                 auto& behavour1 = gameObjects[fst]->physicsBehavour;
                 auto& behavour2 = gameObjects[snd]->physicsBehavour;
 
+                if ((!behavour1.active) && (!behavour2.active)) continue;
                 if (!(behavour1.layerMask & behavour2.layerMask)) continue;
 
                 for (const auto& collider1 : behavour1.colliders) {
@@ -41,8 +42,25 @@ public:
 
                         polygonIntersection(collider1, transform1, collider2, transform2, info);
 
-                        if (fst == 0 && snd == 1) {
-                            distance = info.dist;
+                        if (info.dist < 0) {
+                            debugLog = std::to_string(info.axis.x) + " " + std::to_string(info.axis.y) + " " 
+                                     + std::to_string(info.position.x) + " " + std::to_string(info.position.y);
+
+                            
+                            if (behavour1.active) {
+                                behavour1.force(
+                                    info.position,
+                                    -info.axis * 10000 * info.dist,
+                                    deltatime
+                                );
+                            }
+                            if (behavour2.active) {
+                                behavour2.force(
+                                    info.position,
+                                    info.axis * 10000 * (-info.dist),
+                                    deltatime
+                                );
+                            }
                         }
                     }
                 }
