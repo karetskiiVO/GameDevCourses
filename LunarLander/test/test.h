@@ -15,6 +15,17 @@ public:
     }
 };
 
+class DebugWriter : public game::Component {
+    char* content;
+
+public:
+    DebugWriter (char* output) : content(output) {}
+
+    void update (float deltatime) {
+        sprintf_s(content, 128, "distance: %.2f", distance);
+    }
+};
+
 class GravicyMaker : public game::Component {
     game::PhysicsBehavour* behavour;
 
@@ -22,6 +33,8 @@ public:
     GravicyMaker (game::GameObject* gameObject) : behavour(&gameObject->physicsBehavour) {}
 
     void update (float deltatime) {
-        behavour->force(behavour->getTransform()->position, geom::Vector2f{0, -10.0}, deltatime);
+        behavour->force(behavour->getTransform()->position, geom::Vector2f{0, -40.0}, deltatime);
     }
 };
+
+

@@ -60,7 +60,7 @@ void initialize () {
         new game::PolygonRenderer(polygon),
         game::PhysicsBehavour(
             polygon, 
-            uint32_t(-1),
+            uint32_t(1),
             10.0f, 10.0f,
             true
         )
@@ -75,25 +75,36 @@ void initialize () {
         new game::PolygonRenderer(floorPolygon),
         game::PhysicsBehavour(
             floorPolygon,
-            uint32_t(-1),
+            uint32_t(1),
             10.0f, 10.0f,
             false
         )    
     );
 
-    auto textRenderer = new game::UITextRenderer();
-    textRenderer->position = geom::Vector2i(8, 8);
+    auto fpsRenderer = new game::UITextRenderer();
+    fpsRenderer->position = geom::Vector2i(8, 8);
     auto fpsCounterGameObject = new game::GameObject(
         game::Transform{}, 
-        textRenderer,
+        fpsRenderer,
         game::PhysicsBehavour()
     );
-    auto fpsCounter = new FPScounter(textRenderer->content);
+    auto fpsCounter = new FPScounter(fpsRenderer->content);
     fpsCounterGameObject->components.push_back(fpsCounter);
+
+    auto debugRenderer = new game::UITextRenderer();
+    debugRenderer->position = geom::Vector2i(8, 40);
+    auto debugGameObject = new game::GameObject(
+        game::Transform{}, 
+        debugRenderer,
+        game::PhysicsBehavour()
+    );
+    auto debugWriter = new DebugWriter(debugRenderer->content);
+    debugGameObject->components.push_back(debugWriter);
 
     gameEngine->add(testGameObject1);
     gameEngine->add(floorGameObject);
     gameEngine->add(fpsCounterGameObject);
+    gameEngine->add(debugGameObject);
 }
 
 // this function is called to update game data,
