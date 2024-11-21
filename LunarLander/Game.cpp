@@ -65,8 +65,8 @@ void initialize () {
             true
         )
     );
-    // auto gravicy = new GravicyMaker(testGameObject1);
-    // testGameObject1->components.push_back(gravicy);
+    auto gravicy = new GravicyMaker(testGameObject1);
+    testGameObject1->components.push_back(gravicy);
 
     auto floorGameObject = new game::GameObject(
         game::Transform{
@@ -100,7 +100,7 @@ void initialize () {
 // dt - time elapsed since the previous update (in seconds)
 void act (float dt) {
     gameEngine->update(dt);
-    //gameEngine->physicsUpdate(dt);
+    gameEngine->physicsUpdate(dt);
 
     if (is_key_pressed(VK_ESCAPE))
         schedule_quit_game();

@@ -22,6 +22,6 @@ public:
     GravicyMaker (game::GameObject* gameObject) : behavour(&gameObject->physicsBehavour) {}
 
     void update (float deltatime) {
-        behavour->force(behavour->gameObjectTransform->position, geom::Vector2f{-1.0, 0}, deltatime);
+        behavour->force(behavour->gameObjectTransform->position, geom::Vector2f{0, -10.0}, deltatime);
     }
 };
