@@ -51,7 +51,7 @@ struct Vector2 {
     }
 
     auto magnitude () const -> decltype(x*x + y*y) {
-        return std::abs(magnitude2());
+        return std::sqrt(magnitude2());
     }
 
     // static const Vector2 zero;
