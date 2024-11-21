@@ -7,7 +7,6 @@ namespace game {
 
 class GameEngine {
     std::vector<GameObject*> gameObjects;
-
 public:
     Camera camera;
     
@@ -20,6 +19,9 @@ public:
     
     ~GameEngine () = default;
 
+    void physicsUpdate (float deltatime) {
+        for (auto gameObject : gameObjects) gameObject->physicsBehavour.physicsUpdate(deltatime);
+    }
     void update (float deltatime) {
         for (auto gameObject : gameObjects) gameObject->update(deltatime);
     }

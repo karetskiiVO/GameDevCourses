@@ -48,19 +48,51 @@ void initialize () {
         {-4.73f, -5.50f},
     });
 
+    auto floorPolygon = geom::Polygon({
+        { 100.0f,  10.0f},
+        { 100.0f, -10.0f},
+        {-100.0f, -10.0f},
+        {-100.0f,  10.0f},
+    });
+
     auto testGameObject1 = new game::GameObject(
         game::Transform{}, 
-        (new game::MultiRenderer)->addPolygons(geom::splitToConvex(polygon))
+        new game::PolygonRenderer(polygon),
+        game::PhysicsBehavour(
+            polygon, 
+            uint32_t(-1),
+            10.0f, 10.0f,
+            true
+        )
+    );
+    // auto gravicy = new GravicyMaker(testGameObject1);
+    // testGameObject1->components.push_back(gravicy);
+
+    auto floorGameObject = new game::GameObject(
+        game::Transform{
+            .position = geom::Vector2f{0, -40.0f},
+        },
+        new game::PolygonRenderer(floorPolygon),
+        game::PhysicsBehavour(
+            floorPolygon,
+            uint32_t(-1),
+            10.0f, 10.0f,
+            false
+        )    
     );
 
     auto textRenderer = new game::UITextRenderer();
     textRenderer->position = geom::Vector2i(8, 8);
-    auto fpsCounterGameObject = new game::GameObject(game::Transform{}, textRenderer);
+    auto fpsCounterGameObject = new game::GameObject(
+        game::Transform{}, 
+        textRenderer,
+        game::PhysicsBehavour()
+    );
     auto fpsCounter = new FPScounter(textRenderer->content);
-
     fpsCounterGameObject->components.push_back(fpsCounter);
 
     gameEngine->add(testGameObject1);
+    gameEngine->add(floorGameObject);
     gameEngine->add(fpsCounterGameObject);
 }
 
@@ -68,6 +100,7 @@ void initialize () {
 // dt - time elapsed since the previous update (in seconds)
 void act (float dt) {
     gameEngine->update(dt);
+    //gameEngine->physicsUpdate(dt);
 
     if (is_key_pressed(VK_ESCAPE))
         schedule_quit_game();

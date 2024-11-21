@@ -13,10 +13,14 @@ namespace game {
 struct GameObject {
     Transform transform;
     Renderer* renderer;
+    PhysicsBehavour physicsBehavour;
 
     std::vector<Component*> components;
 
-    GameObject(Transform tranform, Renderer* renderer) : transform(tranform), renderer(renderer) {}
+    GameObject(Transform transform, Renderer* renderer, PhysicsBehavour physicsBehavour) 
+    : transform(transform), renderer(renderer), physicsBehavour(physicsBehavour) {
+        this->physicsBehavour.gameObjectTransform = &(this->transform);
+    }
 
     void render  (Camera& camera) {
         renderer->render(camera, transform);

@@ -17,11 +17,19 @@ struct Polygon {
     Polygon (const std::vector<Vector2f>& verticies) : verticies(verticies) {}
 };
 
-std::pair<Vector2f, float> polygonIntersection (const Polygon& fst, const Polygon& snd) {
+struct IntersectionInfo {
+    Vector2f position;
+    Vector2f axis;
+    float dist;
+};
+
+
+IntersectionInfo polygonIntersection (const Polygon& fst, const Polygon& snd) {
     const Rotation rot = Rotation(std::acos(0.f));
 
     struct LineSegment {
         float min, max;
+        geom::Point pointmax, pointmin;
     };
 
     auto separateAxis = [] (const Polygon& poly, Vector2f axis) -> LineSegment {
@@ -33,14 +41,22 @@ std::pair<Vector2f, float> polygonIntersection (const Polygon& fst, const Polygo
         // тернарник
 
         for (const auto& vert : poly.verticies) {
-            res.min = std::min(res.min, dot<float>(vert, axis));
-            res.max = std::max(res.max, dot<float>(vert, axis));
+            if (res.min > dot<float>(vert, axis)) {
+                res.min = dot<float>(vert, axis);
+                res.pointmin = vert;
+            }
+
+            if (res.max < dot<float>(vert, axis)) {
+                res.max = dot<float>(vert, axis);
+                res.pointmax = vert;
+            }
         }
 
         return res;
     };
 
-    auto res = std::pair<Vector2f, float>{
+    auto res = IntersectionInfo{
+        Vector2f(),
         Vector2f(),
         std::numeric_limits<float>::infinity()
     };
@@ -52,10 +68,12 @@ std::pair<Vector2f, float> polygonIntersection (const Polygon& fst, const Polygo
         auto seg1 = separateAxis(fst, axis);
         auto seg2 = separateAxis(snd, axis);
 
-        auto dist = (std::max(seg1.max, seg2.max) - std::min(seg1.min, seg2.min)) - (seg1.max - seg1.min) - (seg2.max - seg2.min);
-        if (dist > 0) return {Vector2f(), std::numeric_limits<float>::infinity()};
+        if (seg1.max < seg2.max) std::swap(seg1, seg2);
 
-        if (dist > res.second) res = {axis, dist};
+        auto dist = (std::max(seg1.max, seg2.max) - std::min(seg1.min, seg2.min)) - (seg1.max - seg1.min) - (seg2.max - seg2.min);
+        if (dist > 0) return {Vector2f(), Vector2f(), std::numeric_limits<float>::infinity()};
+
+        if (dist > res.dist) res = {(seg1.pointmin + seg2.pointmax) / 2, axis, dist};
     }
 
     for (size_t i = 0; i < snd.verticies.size(); i++) {
@@ -65,13 +83,15 @@ std::pair<Vector2f, float> polygonIntersection (const Polygon& fst, const Polygo
         auto seg1 = separateAxis(fst, axis);
         auto seg2 = separateAxis(snd, axis);
 
-        auto dist = (std::max(seg1.max, seg2.max) - std::min(seg1.min, seg2.min)) - (seg1.max - seg1.min) - (seg2.max - seg2.min);
-        if (dist > 0) return {Vector2f(), std::numeric_limits<float>::infinity()};
+        if (seg1.max < seg2.max) std::swap(seg1, seg2);
 
-        if (dist > res.second) res = {axis, dist};
+        auto dist = (std::max(seg1.max, seg2.max) - std::min(seg1.min, seg2.min)) - (seg1.max - seg1.min) - (seg2.max - seg2.min);
+        if (dist > 0) return {Vector2f(), Vector2f(), std::numeric_limits<float>::infinity()};
+
+        if (dist > res.dist) res = {(seg1.pointmin + seg2.pointmax) / 2, axis, dist};
     }
 
-    return res;
+    return {};
 }
 
 std::vector<Polygon> splitToConvex (Polygon poly) {
