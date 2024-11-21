@@ -20,6 +20,18 @@ public:
     ~GameEngine () = default;
 
     void physicsUpdate (float deltatime) {
+        for (size_t fst = 0; fst < gameObjects.size(); fst++) {
+            for (size_t snd = fst + 1; snd < gameObjects.size(); snd++) {
+                auto& behavour1 = gameObjects[fst]->physicsBehavour;
+                auto& behavour2 = gameObjects[snd]->physicsBehavour;
+
+                if (!(behavour1.active || behavour2.active)) continue;
+                if (!(behavour1.layerMask & behavour2.layerMask)) continue;
+
+                //for()
+            }
+        }
+
         for (auto gameObject : gameObjects) gameObject->physicsBehavour.physicsUpdate(deltatime);
     }
     void update (float deltatime) {

@@ -10,7 +10,7 @@ struct Transform {
     geom::Vector2f position;
 };
 
-struct PhysicsBehavour {
+class PhysicsBehavour {
     uint32_t layerMask = 0;
     bool active = false;
     
@@ -21,7 +21,7 @@ struct PhysicsBehavour {
     float rotationvelocity = 0.0f;
 
     std::vector<geom::Polygon> colliders;  
-    
+public:
     PhysicsBehavour () {}
 
     PhysicsBehavour (
@@ -36,12 +36,19 @@ struct PhysicsBehavour {
         velocity += f / mass * delatatime;
     }
 
+    const Transform* getTransform () const {
+        return gameObjectTransform;
+    }
+
     void physicsUpdate (float delatatime) {
         if (!active) return;
 
         gameObjectTransform->position += velocity * delatatime;
         // gameObjectTransform->rotation += geom::Rotation(rotationvelocity * delatatime); 
     }
+
+    friend class GameEngine;
+    friend struct GameObject;
 };
 
 }
