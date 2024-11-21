@@ -61,7 +61,8 @@ public:
             }
         }
     }
-    void drawSegment (geom::Vector2f start, geom::Vector2f end, RGBColor color, uint8_t thik = 3) {
+
+    void drawSegment (geom::Vector2f start, geom::Vector2f end, RGBColor color) {
         auto localStart = (-transform.rotation) * (start - transform.position);
         auto localEnd   = (-transform.rotation) * (  end - transform.position);
 
@@ -99,6 +100,25 @@ public:
             }
 
             drawPixel(x, y, color);
+        }
+    }
+
+    // draws 8*16 letter
+    void drawUICharacter (geom::Vector2i position, const uint8_t* letter, RGBColor color, int scale) {
+        for (uint16_t y = 0; y < 16u; y++) {
+            for (uint16_t x = 0; x < 8u; x++) {
+                if (!(letter[y] & (uint16_t(1) << x))) continue;
+
+                for (int dy = y * scale; dy < (y+1)*scale; dy++) {
+                    for (int dx = x*scale; dx < (x+1)*scale; dx++) {
+                        auto x_ = 8*scale - dx + position.x;
+                        auto y_ = dy + position.y;
+                        
+                        if (0 <= x_ && x_ < width && 0 <= y_ && y_ < height) 
+                                screen[y_ * width + x_] = color.col;
+                    }
+                }
+            }
         }
     }
 };

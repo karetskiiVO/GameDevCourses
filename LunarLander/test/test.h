@@ -1,36 +1,15 @@
 #pragma once
 
 #include <gameengine.h>
+#include <cstdio>
 
-struct PointRenderer : public game::Renderer {
-    void render (game::Camera& camera, const game::Transform& gameObjectTransform) {
-        camera.drawCircle(gameObjectTransform.position, game::RGBColor(255, 255, 255), 1);
-    }
-};
+class FPScounter : public game::Component {
+    char* content;
 
-struct SegmentRenderer : public game::Renderer {
-    geom::Vector2f begin, end;
-
-    SegmentRenderer (geom::Vector2f begin, geom::Vector2f end) : begin(begin), end(end) {}
-
-    void render (game::Camera& camera, const game::Transform& gameObjectTransform) {
-        camera.drawSegment(
-            gameObjectTransform.position + begin,
-            gameObjectTransform.position + end,
-            game::RGBColor(255, 255, 255),
-            1
-        );
-    }
-};
-
-struct Mover : public game::Component {
-    game::Transform* parentTransform = nullptr;
-    geom::Vector2f velocity;
-
-    Mover (game::Transform* parentTransform, geom::Vector2f velocity) :
-        parentTransform(parentTransform), velocity(velocity) {}
+public:
+    FPScounter (char* output) : content(output) {}
 
     void update (float deltatime) {
-        parentTransform->rotation += geom::Rotation(deltatime);
+        sprintf_s(content, 128, "fps:%.2f", 1/deltatime);
     }
 };

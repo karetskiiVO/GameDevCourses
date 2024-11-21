@@ -20,7 +20,6 @@
 
 game::GameEngine* gameEngine = nullptr;
 
-
 // initialize game data in this function
 void initialize () {
     gameEngine = new game::GameEngine(
@@ -32,25 +31,44 @@ void initialize () {
         )
     );
 
-    gameEngine->camera.transform.position = geom::Vector2f{10, 0};
+    auto Polygon1 = geom::Polygon({
+        {-2.67f,  3.80f},
+        { 4.03f,  2.54f},
+        { 5.07f, -0.54f},
+        {-0.65f, -4.16f},
+        {-6.89f, -1.52f},
+    });
 
-    auto testGameObject1 = new game::GameObject(game::Transform{}, new SegmentRenderer(
-        geom::Vector2f(10, 0),
-        geom::Vector2f(0, 0)
-    ));
-    auto testGameObject2 = new game::GameObject(game::Transform{}, new SegmentRenderer(
-        geom::Vector2f(0, 10),
-        geom::Vector2f(0, 0)
-    ));
-    // auto mover = new Mover{
-    //     &gameEngine->camera.transform,
-    //     geom::Vector2f(0, 10)        
-    // };
-    // testGameObject->components.push_back(mover);
+    auto Polygon2 = geom::Polygon({
+        {-2.67f,  4.00f},
+        { 2.11f,  2.28f},
+        { 2.13f, -1.04f},
+        {-2.07f, -2.40f},
+    });
 
-    // gameEngine->add(testGameObject);
+    auto testGameObject1 = new game::GameObject(
+        game::Transform{
+            .position = {-10.0f, 0}
+        }, 
+        new game::PolygonRenderer(Polygon1)
+    );
+    auto testGameObject2 = new game::GameObject(
+        game::Transform{
+            .position = {10.0f, 0}
+        }, 
+        new game::PolygonRenderer(Polygon2)
+    );
+
+    auto textRenderer = new game::UITextRenderer();
+    textRenderer->position = geom::Vector2i(8, 8);
+    auto fpsCounterGameObject = new game::GameObject(game::Transform{}, textRenderer);
+    auto fpsCounter = new FPScounter(textRenderer->content);
+
+    fpsCounterGameObject->components.push_back(fpsCounter);
+
     gameEngine->add(testGameObject1);
     gameEngine->add(testGameObject2);
+    gameEngine->add(fpsCounterGameObject);
 }
 
 // this function is called to update game data,

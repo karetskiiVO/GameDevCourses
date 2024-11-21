@@ -19,6 +19,16 @@ struct Vector2 {
     auto operator/ (ScalarT scalar) const -> Vector2<decltype(x / scalar)> {
         return {x / scalar, y / scalar};
     }
+    template <typename ScalarT>
+    Vector2& operator*= (ScalarT scalar) {
+        *this = {x * scalar, y * scalar};
+        return *this;
+    }
+    template <typename ScalarT>
+    Vector2& operator/= (ScalarT scalar) {
+        *this = {x / scalar, y / scalar};
+        return *this;
+    }
 
     Vector2 operator+ (Vector2 vector) const {
         return {x + vector.x, y + vector.y};
@@ -57,7 +67,7 @@ auto operator* (ScalarT scalar, Vector2<T> v) -> decltype(v * scalar) {
 }
 
 template <typename T>
-auto dot (Vector2<T>& v1, Vector2<T>& v2) -> decltype(v1.x * v2.x + v1.y * v2.y) {
+auto dot (const Vector2<T>& v1, const Vector2<T>& v2) -> decltype(v1.x * v2.x + v1.y * v2.y) {
     return v1.x * v2.x + v1.y * v2.y;
 }
 
