@@ -75,42 +75,57 @@ std::pair<Vector2f, float> polygonIntersection (const Polygon& fst, const Polygo
 }
 
 std::vector<Polygon> splitToConvex (Polygon poly) {
-    std::vector<Polygon> res;
+    std::vector<Polygon> polygons;
 
-    poly.verticies.push_back(poly.verticies[0]);
-
-    const std::function<void(size_t, size_t)> createConvex = [&poly, &res, &createConvex] (size_t begin, size_t end) {
-        if ((end - begin + poly.verticies.size()) % poly.verticies.size() <= 1) return;
-
-        if ((end - begin + poly.verticies.size()) % poly.verticies.size() == 2) {
-            res.push_back(Polygon{{poly.verticies.begin() + begin, poly.verticies.begin() + end - 1}});
+    const std::function<void(std::vector<geom::Point>)> createConvex = [&polygons, &createConvex] (std::vector<geom::Point>&& points) {
+        if (points.size() < 3) return;
+        if (points.size() == 3) {
+            polygons.push_back(points);
             return;
         }
 
-        std::vector<Point> current = {poly.verticies[begin], poly.verticies[(begin + 1) % poly.verticies.size()]};
+        std::vector<geom::Point> buf;
+        std::vector<geom::Point> res;
 
-        Vector2f prevEdge = current[1] - current[0];
-        size_t prevVert = begin + 1;
-        for (size_t newVert = begin + 2; newVert < end; newVert++) {
-            Vector2f currEdge = poly.verticies[newVert] - current.back();
+        res.push_back(points[0]);
+        res.push_back(points[1]);
 
-            if (cross(currEdge, prevEdge) < 0) continue;
-            
-            createConvex(prevVert, newVert);
-            current.push_back(poly.verticies[newVert]);
-            
-            prevEdge = currEdge;
-            prevVert = newVert;
+        auto prevEdge = points[1] - points[0];
+
+        for (size_t i = 2; i < points.size(); i++) {
+            auto point = points[i]; 
+            auto currEdge = point - res.back();
+
+            if (cross(currEdge, prevEdge) < -1e-2) {
+                buf.push_back(point);
+            } else {
+                if (buf.size() > 0) {
+                    buf.push_back(res.back());
+
+                    createConvex(buf);
+                    buf.clear();
+                }
+
+                res.push_back(point);
+
+                prevEdge = currEdge;
+            }
         }
 
-        createConvex(prevVert, end);
+        if (buf.size() > 0) {
+            buf.push_back(res[0]);
+            buf.push_back(res.back());
 
-        res.push_back(current);
+            createConvex(buf);
+        }
+
+        if (res.size() < 3) return;
+        polygons.push_back(res);
     };
 
-    createConvex(0, poly.verticies.size() - 1);
+    createConvex(poly.verticies);
 
-    return res;
+    return polygons;
 }
 
 }

@@ -13,14 +13,13 @@ struct Transform {
 struct PhysicsBehavour {
     uint32_t layerMask;
     Transform* gameObjectTransform;
-    float mass;
+    float mass, inertion;
+    bool active;
+    std::vector<geom::Polygon> colliders;  
     
-    
+    void force (geom::Point point, geom::Vector2f vector) {
+        
+    }
 };
-
-struct PolygonCollider {
-    /* data */
-};
-
 
 }
