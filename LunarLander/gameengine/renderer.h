@@ -60,7 +60,7 @@ struct UITextRenderer : public Renderer {
         while (*ptr != 0) {
             camera.drawUICharacter(currPosition, font[*ptr], RGBColor(255, 255, 255), scale);
             currPosition.x += 8*scale;
-            *ptr++;
+            ptr++;
         }
     }
 };

@@ -13,6 +13,7 @@ struct Transform {
 class PhysicsBehavour {
     uint32_t layerMask = 0;
     bool active = false;
+    bool triggered = false;
     
     Transform* gameObjectTransform = nullptr;
     float mass, inertion;
@@ -34,10 +35,15 @@ public:
         if (!active) return;
 
         velocity += f / mass * delatatime;
+        rotationvelocity += geom::cross(point - gameObjectTransform->position, f) / inertion * delatatime;
     }
 
     const Transform* getTransform () const {
         return gameObjectTransform;
+    }
+
+    bool isTriggered () const {
+        return triggered;
     }
 
     void physicsUpdate (float delatatime) {

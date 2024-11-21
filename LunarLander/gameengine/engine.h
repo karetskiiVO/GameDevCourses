@@ -4,8 +4,6 @@
 #include <camera.h>
 #include <string>
 
-std::string debugLog = "";
-
 namespace game {
 
 class GameEngine {
@@ -23,6 +21,8 @@ public:
     ~GameEngine () = default;
 
     void physicsUpdate (float deltatime) {
+        for (auto gameObject : gameObjects) gameObject->physicsBehavour.triggered = false;
+
         const geom::Rotation rot = geom::Rotation(std::acos(0.f));
 
         for (size_t fst = 0; fst < gameObjects.size(); fst++) {
@@ -42,11 +42,10 @@ public:
 
                         polygonIntersection(collider1, transform1, collider2, transform2, info);
 
-                        if (info.dist < 0) {
-                            debugLog = std::to_string(info.axis.x) + " " + std::to_string(info.axis.y) + " " 
-                                     + std::to_string(info.position.x) + " " + std::to_string(info.position.y);
+                        behavour1.triggered = true;
+                        behavour2.triggered = true;
 
-                            
+                        if (info.dist < 0) {                            
                             if (behavour1.active) {
                                 behavour1.force(
                                     info.position,

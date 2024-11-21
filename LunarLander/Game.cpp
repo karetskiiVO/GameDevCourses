@@ -4,6 +4,7 @@
 
 #include <gameengine.h>
 #include "test.h"
+#include "utilities.h"
 
 //
 //  You are free to modify this file
@@ -31,14 +32,7 @@ void initialize () {
         )
     );
 
-    auto polygon = /*geom::Polygon({
-        { 10.0f,  10.0f},
-        { 10.0f, -10.0f},
-        {-10.0f, -10.0f},
-        {-10.0f,  10.0f},
-    });*/
-    
-    geom::Polygon({
+    auto polygon = geom::Polygon({
         {-4.31f,  2.40f},
         {-1.00f,  5.00f},
 
@@ -62,52 +56,45 @@ void initialize () {
         {-100.0f,  10.0f},
     });
 
-    auto testGameObject1 = new game::GameObject(
-        game::Transform{}, 
+    auto apolo13 = new game::GameObject(
+        game::Transform{
+            .position = {0.0f, 400.0f}
+        }, 
         new game::PolygonRenderer(polygon),
-        game::PhysicsBehavour(
+        game::PhysicsBehavour{
             polygon, 
             uint32_t(1),
-            10.0f, 10.0f,
+            10.0f, 100.0f,
             true
-        )
+        }
     );
-    auto gravicy = new GravicyMaker(testGameObject1);
-    testGameObject1->components.push_back(gravicy);
+    auto gravicy = new GravicyMaker(apolo13);
+    apolo13->components.push_back(gravicy);
+    auto cameraMover = new CameraMover(&apolo13->transform, &gameEngine->camera.transform);
+    apolo13->components.push_back(cameraMover);
 
-    auto floorGameObject = new game::GameObject(
-        game::Transform{
-            .position = geom::Vector2f{0, -40.0f},
-        },
-        new game::PolygonRenderer(floorPolygon),
-        game::PhysicsBehavour(
-            floorPolygon,
-            uint32_t(1),
-            10.0f, 10.0f,
-            false
-        )    
-    );
+    auto moon = CreateMoon(300);
 
     auto fpsRenderer = new game::UIFPSRenderer();
     fpsRenderer->position = geom::Vector2i(8, 8);
-    auto fpsCounterGameObject = new game::GameObject(
+    auto fpsCounterGameObject = new game::GameObject{
         game::Transform{}, 
         fpsRenderer,
         game::PhysicsBehavour()
-    );
+    };
 
     auto debugRenderer = new game::UITextRenderer();
     debugRenderer->position = geom::Vector2i(8, 40);
-    auto debugGameObject = new game::GameObject(
+    auto debugGameObject = new game::GameObject{
         game::Transform{}, 
         debugRenderer,
         game::PhysicsBehavour()
-    );
+    };
     auto debugWriter = new DebugWriter(debugRenderer->content);
     debugGameObject->components.push_back(debugWriter);
 
-    gameEngine->add(testGameObject1);
-    gameEngine->add(floorGameObject);
+    gameEngine->add(apolo13);
+    gameEngine->add(moon);
     gameEngine->add(fpsCounterGameObject);
     gameEngine->add(debugGameObject);
 }
