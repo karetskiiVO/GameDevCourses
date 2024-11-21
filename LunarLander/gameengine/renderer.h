@@ -63,4 +63,19 @@ struct UITextRenderer : public Renderer {
     }
 };
 
+struct MultiRenderer : public Renderer {
+    std::vector<Renderer*> renderers;
+
+    MultiRenderer (const std::vector<Renderer*>& renderers = {}) : renderers(renderers) {}
+
+    void render (Camera& camera, const Transform& gameObjectTransform) {
+        for (auto rendererptr : renderers) rendererptr->render(camera, gameObjectTransform);
+    }
+
+    MultiRenderer* addPolygons (const std::vector<geom::Polygon>& polygons) {
+        for (const auto& polygon : polygons) renderers.push_back(new PolygonRenderer(polygon));
+        return this;
+    }
+};
+
 }

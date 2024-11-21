@@ -31,32 +31,20 @@ void initialize () {
         )
     );
 
-    auto Polygon1 = geom::Polygon({
-        {-2.67f,  3.80f},
-        { 4.03f,  2.54f},
-        { 5.07f, -0.54f},
-        {-0.65f, -4.16f},
-        {-6.89f, -1.52f},
-    });
-
-    auto Polygon2 = geom::Polygon({
-        {-2.67f,  4.00f},
-        { 2.11f,  2.28f},
-        { 2.13f, -1.04f},
-        {-2.07f, -2.40f},
+    auto polygon = geom::Polygon({
+        {-4.31f,  2.40f},
+        {-1.00f,  5.00f},
+        { 3.95f,  4.48f},
+        { 3.63f,  2.08f},
+        {-1.99f,  0.72f},
+        {-0.17f, -4.08f},
+        {-0.07f, -7.16f},
+        {-4.73f, -5.50f}
     });
 
     auto testGameObject1 = new game::GameObject(
-        game::Transform{
-            .position = {-10.0f, 0}
-        }, 
-        new game::PolygonRenderer(Polygon1)
-    );
-    auto testGameObject2 = new game::GameObject(
-        game::Transform{
-            .position = {10.0f, 0}
-        }, 
-        new game::PolygonRenderer(Polygon2)
+        game::Transform{}, 
+        (new game::MultiRenderer)->addPolygons(geom::splitToConvex(polygon))
     );
 
     auto textRenderer = new game::UITextRenderer();
@@ -67,7 +55,6 @@ void initialize () {
     fpsCounterGameObject->components.push_back(fpsCounter);
 
     gameEngine->add(testGameObject1);
-    gameEngine->add(testGameObject2);
     gameEngine->add(fpsCounterGameObject);
 }
 

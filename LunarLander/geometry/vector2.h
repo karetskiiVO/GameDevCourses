@@ -71,6 +71,11 @@ auto dot (const Vector2<T>& v1, const Vector2<T>& v2) -> decltype(v1.x * v2.x + 
     return v1.x * v2.x + v1.y * v2.y;
 }
 
+template <typename T>
+auto cross (const Vector2<T>& v1, const Vector2<T>& v2) -> decltype(v1.x * v2.y - v1.y * v2.x) {
+    return v1.x * v2.y - v1.y * v2.x;
+}
+
 using Vector2f = Vector2<float>;
 using Vector2i = Vector2<int>;
 using Vector2d = Vector2<double>;
