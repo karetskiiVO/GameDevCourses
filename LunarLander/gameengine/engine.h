@@ -42,10 +42,10 @@ public:
 
                         polygonIntersection(collider1, transform1, collider2, transform2, info);
 
-                        behavour1.triggered = true;
-                        behavour2.triggered = true;
-
                         if (info.dist < 0) {                            
+                            behavour1.triggered = true;
+                            behavour2.triggered = true;
+
                             if (behavour1.active) {
                                 behavour1.force(
                                     info.position,

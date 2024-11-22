@@ -27,7 +27,7 @@ class Camera {
     int height = 0;
     int width  = 0;
 public:
-    float scale = 1;
+    float scale = 10;
     Transform transform;
 
     Camera (uint32_t* screen, int height, int width, Transform transform = Transform()) :

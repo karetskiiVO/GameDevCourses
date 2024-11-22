@@ -49,12 +49,20 @@ struct PolygonRenderer : public Renderer {
 };
 
 struct UITextRenderer : public Renderer {
+    enum Align {
+        Left   = 0,
+        Center = 1,
+        Right  = 2,
+    };    
+
+    Align align = Align::Left;
     geom::Vector2i position;
     char content[128];
     int scale = 2;
 
     void render (Camera& camera, const Transform&) {
-        auto currPosition = position;
+        
+        auto currPosition = position - static_cast<int>(strlen(content) * 8 * scale * static_cast<int>(align) / 2) * geom::Vector2i{1, 0};
 
         auto ptr = content;
         while (*ptr != 0) {
@@ -89,6 +97,11 @@ struct MultiRenderer : public Renderer {
 
     MultiRenderer* addPolygons (const std::vector<geom::Polygon>& polygons) {
         for (const auto& polygon : polygons) renderers.push_back(new PolygonRenderer(polygon));
+        return this;
+    }
+
+    MultiRenderer* addUIText (const std::vector<UITextRenderer*>& uirenderers) {
+        for (auto renderer : uirenderers) renderers.push_back(renderer);
         return this;
     }
 };

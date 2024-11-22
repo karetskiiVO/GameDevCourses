@@ -3,7 +3,6 @@
 #include <memory>
 
 #include <gameengine.h>
-#include "test.h"
 #include "utilities.h"
 
 //
@@ -56,16 +55,9 @@ void initialize () {
         {-100.0f,  10.0f},
     });
 
-    auto apolo13 = new game::GameObject(
+    auto apolo13 = createLander(
         game::Transform{
-            .position = {0.0f, 400.0f}
-        }, 
-        new game::PolygonRenderer(polygon),
-        game::PhysicsBehavour{
-            polygon, 
-            uint32_t(1),
-            10.0f, 100.0f,
-            true
+            .position = {0.0f, 120.0f}
         }
     );
     auto gravicy = new GravicyMaker(apolo13);
@@ -73,7 +65,39 @@ void initialize () {
     auto cameraMover = new CameraMover(&apolo13->transform, &gameEngine->camera.transform);
     apolo13->components.push_back(cameraMover);
 
-    auto moon = CreateMoon(300);
+    auto resultMsgRenderer = new game::UITextRenderer();
+    resultMsgRenderer->position = geom::Vector2i(512, 350);
+    resultMsgRenderer->align = game::UITextRenderer::Align::Center;
+
+    auto resourseMsgRenderer = new game::UITextRenderer();
+    resourseMsgRenderer->position = geom::Vector2i(800, 72);
+    resourseMsgRenderer->align = game::UITextRenderer::Align::Left;
+
+    auto velocityMsgRenderer = new game::UITextRenderer();
+    velocityMsgRenderer->position = geom::Vector2i(800, 40);
+    velocityMsgRenderer->align =  game::UITextRenderer::Align::Left;
+
+    auto scoreMsgRenderer = new game::UITextRenderer();
+    scoreMsgRenderer->position = geom::Vector2i(800, 8);
+    scoreMsgRenderer->align =  game::UITextRenderer::Align::Left;
+    
+    auto controllerGameObject = new game::GameObject {
+        game::Transform{},
+        new game::MultiRenderer{
+            {resultMsgRenderer, resourseMsgRenderer, velocityMsgRenderer, scoreMsgRenderer}
+        },
+        game::PhysicsBehavour()
+    };
+    auto playerController = new PlayerController{
+        apolo13             ,
+        resultMsgRenderer   ,
+        resourseMsgRenderer ,
+        velocityMsgRenderer ,
+        scoreMsgRenderer    ,
+    };
+    controllerGameObject->components.push_back(playerController);
+
+    auto moon = createPlanet(game::Transform{}, 80);
 
     auto fpsRenderer = new game::UIFPSRenderer();
     fpsRenderer->position = geom::Vector2i(8, 8);
@@ -83,20 +107,10 @@ void initialize () {
         game::PhysicsBehavour()
     };
 
-    auto debugRenderer = new game::UITextRenderer();
-    debugRenderer->position = geom::Vector2i(8, 40);
-    auto debugGameObject = new game::GameObject{
-        game::Transform{}, 
-        debugRenderer,
-        game::PhysicsBehavour()
-    };
-    auto debugWriter = new DebugWriter(debugRenderer->content);
-    debugGameObject->components.push_back(debugWriter);
-
     gameEngine->add(apolo13);
     gameEngine->add(moon);
     gameEngine->add(fpsCounterGameObject);
-    gameEngine->add(debugGameObject);
+    gameEngine->add(controllerGameObject);
 }
 
 // this function is called to update game data,

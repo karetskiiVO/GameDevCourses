@@ -26,9 +26,13 @@ public:
     PhysicsBehavour () {}
 
     PhysicsBehavour (
-        const geom::Polygon& colider, uint32_t layer, float mass, float inertion, bool active
+        const geom::Polygon& collider, uint32_t layer, float mass, float inertion, bool active, bool rawPolygon = false
     ) : layerMask(layer), mass(mass), inertion(inertion), active(active) {
-        colliders = geom::splitToConvex(colider);
+        if (rawPolygon) {
+            colliders.push_back(collider);
+        } else {
+            colliders = geom::splitToConvex(collider);
+        }
     }
 
     void force (geom::Point point, geom::Vector2f f, float delatatime) {
@@ -41,9 +45,20 @@ public:
     const Transform* getTransform () const {
         return gameObjectTransform;
     }
-
     bool isTriggered () const {
         return triggered;
+    }
+    void setActive (bool active) { 
+        this->active = active;
+        
+        if (!active) {
+            velocity *= 0;
+            rotationvelocity = 0;
+        }
+    }
+
+    geom::Vector2f getVelocity () const {
+        return velocity;
     }
 
     void physicsUpdate (float delatatime) {
