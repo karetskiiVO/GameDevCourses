@@ -66,6 +66,14 @@
         "xhash": "cpp",
         "chrono": "cpp",
         "forward_list": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "random": "cpp",
+        "queue": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "map": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "xtree": "cpp"
     }
 }

@@ -1,0 +1,10 @@
+^C:\PROJECTS\GAMEDEVCOURSES\LUNARLANDER\BUILD\CMAKEFILES\64C2D5F56B5965A65472FFB8CCD359AF\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Projects/GameDevCourses/LunarLander -BC:/Projects/GameDevCourses/LunarLander/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Projects/GameDevCourses/LunarLander/build/LunarLander.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

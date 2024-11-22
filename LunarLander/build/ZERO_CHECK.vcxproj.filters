@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Projects\GameDevCourses\LunarLander\build\CMakeFiles\64c2d5f56b5965a65472ffb8ccd359af\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{6A8ECE4A-5BA4-38DD-9F7F-C754EDF11D16}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
